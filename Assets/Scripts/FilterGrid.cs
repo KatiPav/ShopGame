@@ -31,7 +31,6 @@ public class FilterGrid : MonoBehaviour
             gridYsize = 0.5f;
             yCount = Mathf.CeilToInt((sr.sprite.rect.height / sr.sprite.pixelsPerUnit) * 2);
             xCount = Mathf.CeilToInt(sr.sprite.rect.width / sr.sprite.pixelsPerUnit) + 1;
-
         }
         else
         {
@@ -45,9 +44,6 @@ public class FilterGrid : MonoBehaviour
             grid = Enumerable.Repeat(false, xCount * yCount).ToList();
             initialized = true;
         }
-
-        Debug.Log("x count is " + xCount);
-        Debug.Log("y count is " + yCount);
     }
 
     public void Click(int x, int y)
