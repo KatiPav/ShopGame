@@ -80,20 +80,29 @@ public class PlacementManager : MonoBehaviour
         Vector3 worldPosition = isometricGrid.CellToWorld(new Vector3Int(coordinates.x, coordinates.y, 0));
         obj.transform.position = worldPosition;
         AddToAppropriateGrid(obj, coordinates);
-        Debug.Log(obj + "obj should be added to " + coordinates + " at world pos " + worldPosition);
     }
 
     private void AddToAppropriateGrid(GameObject obj, Vector2Int coords)
     {
         switch (obj.layer)
         {
-            case 6://rename these to understandable constants or enums
+            case 7://rename these to understandable constants or enums
                 furnitureGridData.TryPlaceObject(obj, new Vector2Int(coords.x, coords.y));
                 break;
-            case 7:
+            case 6:
                 decorationsGridData.TryPlaceObject(obj, new Vector2Int(coords.x, coords.y));
                 break;
         }
+    }
+
+    public Dictionary<Vector2Int, GameObject> GetFurnitureGridDataPlacedObjects()
+    {
+        return furnitureGridData.GetPlacedObjects();
+    }
+
+    public Dictionary<Vector2Int, GameObject> GetDecorationsGridDataPlacedObjects()
+    {
+        return decorationsGridData.GetPlacedObjects();
     }
 
 }

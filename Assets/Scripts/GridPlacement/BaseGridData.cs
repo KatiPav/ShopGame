@@ -11,6 +11,11 @@ public class BaseGridData
         placedObjects = new Dictionary<Vector2Int, GameObject>();
     }
 
+    public Dictionary<Vector2Int, GameObject> GetPlacedObjects()
+    {
+        return placedObjects;
+    }
+
     public void TryPlaceObject(GameObject gObj, Vector2Int coordinates)
     {
         Vector2Int key = new Vector2Int(coordinates.x, coordinates.y);

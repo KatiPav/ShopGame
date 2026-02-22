@@ -5,6 +5,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     PlacementManager placementManager = null;
+
     InputManager inputManager = null;
 
     SaveManager saveManager = null;
@@ -17,6 +18,7 @@ public class GameManager : MonoBehaviour
     {
         //subscribe to onClick
         inputManager.OnClick += placementManager.Click;
+        inputManager.OnSave += saveManager.SaveGame;
         //add esc option that returns the object to previous position
     }
 

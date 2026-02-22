@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Collections.Generic;
+using System.Linq;
 
 public class SaveManager : MonoBehaviour
 {
@@ -23,46 +25,51 @@ public class SaveManager : MonoBehaviour
         }
 
         saveData = new SaveData();
+        LoadObjectsInGame();
+    }
 
-        //testing only
-        PlacedObject test1 = new PlacedObject();
-        test1.coordinates.x = 2;
-        test1.coordinates.y = 3;
-        test1.id = 0;
-
-        GameObject testItem = PlacedObjectToGameObject(test1);
-        placementManager.LoadObjectInGame(testItem, test1.coordinates);
-
-        PlacedObject test2 = new PlacedObject();
-        test2.coordinates.x = 4;
-        test2.coordinates.y = 6;
-        test2.id = 1;
-        GameObject testItem2 = PlacedObjectToGameObject(test2);
-        placementManager.LoadObjectInGame(testItem2, test2.coordinates);
-
-        //for ech obj in savedata instantiate GameObject and add it to appropriate layer
+    void LoadObjectsInGame()
+    {
         foreach (PlacedObject obj in saveData.GetPlacedObjects())
         {
             GameObject item = PlacedObjectToGameObject(obj);
-            placementManager.LoadObjectInGame(item, obj.coordinates);
+            placementManager.LoadObjectInGame(item, new Vector2Int(obj.x, obj.y));
         }
     }
 
     GameObject PlacedObjectToGameObject(PlacedObject placedObject)
     {
         GameObject prefab = objectDatabase.GetPrefabById(placedObject.id);
-        return Instantiate(prefab, new Vector3(0, 0, 0), Quaternion.identity);
+
+        GameObject item = Instantiate(prefab, new Vector3(0, 0, 0), Quaternion.identity);
+        Id idComp = item.AddComponent<Id>();
+        idComp.id = placedObject.id;
+        return item;
     }
 
-    void GameObjectToPlacedObject()
+    PlacedObject GameObjectToPlacedObject(GameObject item, Vector2Int coords)
     {
-
+        return new PlacedObject(coords, item.GetComponent<Id>().id);
     }
 
     public void SaveGame()
     {
+        List<PlacedObject> itemList = new List<PlacedObject>();
+        //get all newly placed objects and add them to savedata and then save
+        Dictionary<Vector2Int, GameObject> furniture = placementManager.GetFurnitureGridDataPlacedObjects();
+        foreach ((Vector2Int coords, GameObject item) in furniture)
+        {
+            itemList.Add(GameObjectToPlacedObject(item, coords));
+        }
+
+
+        Dictionary<Vector2Int, GameObject> decorations = placementManager.GetDecorationsGridDataPlacedObjects();
+
+        foreach ((Vector2Int coords, GameObject item) in decorations)
+        {
+            itemList.Add(GameObjectToPlacedObject(item, coords));
+        }
+        saveData.UpdateList(itemList);
         saveData.Save();
-        //write all objects to SaveData
-        //do we call SaveData.writeToJson here??
     }
 }

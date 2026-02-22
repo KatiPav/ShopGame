@@ -28,4 +28,5 @@ public class ObjectDatabase : ScriptableObject
         Debug.LogError("No prefab found for id " + id);
         return null;
     }
+
 }

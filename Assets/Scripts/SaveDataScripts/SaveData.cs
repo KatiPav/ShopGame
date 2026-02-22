@@ -30,7 +30,11 @@ public class SaveData
         //either creates or writes to existing json all the placedObjects
         string json = JsonConvert.SerializeObject(placedObjects);
         File.WriteAllText(SAVEFILE_NAME, json);
+    }
 
+    public void UpdateList(List<PlacedObject> objList)
+    {
+        placedObjects = objList;
     }
 
     void readJSON()
