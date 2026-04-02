@@ -7,17 +7,17 @@ using UnityEngine;
 public class SaveData
 {
     const string SAVEFILE_NAME = "placed_objects.json";
-    List<PlacedObject> placedObjects;
+    List<SaveObject> saveObjects;
 
     public SaveData()
     {
-        placedObjects = new List<PlacedObject>();
+        saveObjects = new List<SaveObject>();
         readJSON();
     }
 
-    public List<PlacedObject> GetPlacedObjects()
+    public List<SaveObject> GetSaveObjects()
     {
-        return placedObjects;
+        return saveObjects;
     }
 
     public void Save()
@@ -28,18 +28,18 @@ public class SaveData
     void writeJSON()
     {
         //either creates or writes to existing json all the placedObjects
-        string json = JsonConvert.SerializeObject(placedObjects);
+        string json = JsonConvert.SerializeObject(saveObjects);
         File.WriteAllText(SAVEFILE_NAME, json);
     }
 
-    public void UpdateList(List<PlacedObject> objList)
+    public void UpdateList(List<SaveObject> objList)
     {
-        placedObjects = objList;
+        saveObjects = objList;
     }
 
     void readJSON()
     {
-        //reads from existing json and fills placedObjects
+        //reads from existing json and fills saveObjects
         if (!File.Exists(SAVEFILE_NAME))
         {
             Debug.Log("Savefile not found!");
@@ -48,9 +48,9 @@ public class SaveData
 
         string json = "";
         json = File.ReadAllText(SAVEFILE_NAME);
-        placedObjects = JsonConvert.DeserializeObject<List<PlacedObject>>(json);
+        saveObjects = JsonConvert.DeserializeObject<List<SaveObject>>(json);
 
-        Debug.Log(placedObjects);
+        Debug.Log(saveObjects);
     }
 
 }

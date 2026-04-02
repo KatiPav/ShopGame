@@ -20,6 +20,8 @@ public class GameManager : MonoBehaviour
         inputManager.OnClick += placementManager.Click;
         inputManager.OnSave += saveManager.SaveGame;
         //add esc option that returns the object to previous position
+
+        saveManager.LoadObjectsInGame();
     }
 
 

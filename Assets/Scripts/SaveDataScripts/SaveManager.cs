@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 
 public class SaveManager : MonoBehaviour
 {
@@ -25,51 +26,40 @@ public class SaveManager : MonoBehaviour
         }
 
         saveData = new SaveData();
-        LoadObjectsInGame();
     }
 
-    void LoadObjectsInGame()
+    public void LoadObjectsInGame()
     {
-        foreach (PlacedObject obj in saveData.GetPlacedObjects())
+        foreach (SaveObject obj in saveData.GetSaveObjects())
         {
-            GameObject item = PlacedObjectToGameObject(obj);
-            placementManager.LoadObjectInGame(item, new Vector2Int(obj.x, obj.y));
+            GameObject prefab = objectDatabase.GetPrefabById(obj.prefabId);
+            GameObject itemObj = Instantiate(prefab, new Vector3(0, 0, 0), Quaternion.identity);
+            Item item = itemObj.AddComponent<Item>();
+            item.GridCoordinates = new Vector2Int(0, 0);
+            item.PrefabId = obj.prefabId;
+            item.FloorShape = prefab.GetComponent<FloorShape>().shapeCells;
+            placementManager.PlaceItemObjectAt(itemObj, new Vector2Int(obj.x, obj.y));
         }
     }
 
-    GameObject PlacedObjectToGameObject(PlacedObject placedObject)
+    SaveObject ItemToSaveObject(GameObject itemObj)
     {
-        GameObject prefab = objectDatabase.GetPrefabById(placedObject.id);
-
-        GameObject item = Instantiate(prefab, new Vector3(0, 0, 0), Quaternion.identity);
-        Id idComp = item.AddComponent<Id>();
-        idComp.id = placedObject.id;
-        return item;
-    }
-
-    PlacedObject GameObjectToPlacedObject(GameObject item, Vector2Int coords)
-    {
-        return new PlacedObject(coords, item.GetComponent<Id>().id);
+        Item item = itemObj.GetComponent<Item>();
+        return new SaveObject(item.GridCoordinates, item.PrefabId);
     }
 
     public void SaveGame()
     {
-        List<PlacedObject> itemList = new List<PlacedObject>();
-        //get all newly placed objects and add them to savedata and then save
-        Dictionary<Vector2Int, GameObject> furniture = placementManager.GetFurnitureGridDataPlacedObjects();
-        foreach ((Vector2Int coords, GameObject item) in furniture)
-        {
-            itemList.Add(GameObjectToPlacedObject(item, coords));
-        }
+        List<SaveObject> saveObjects = new List<SaveObject>();
 
+        List<GameObject> furniture = placementManager.getFurniture();
+        List<GameObject> decorations = placementManager.getDecorations();
 
-        Dictionary<Vector2Int, GameObject> decorations = placementManager.GetDecorationsGridDataPlacedObjects();
+        List<GameObject> items = furniture.Concat(decorations).ToList();
 
-        foreach ((Vector2Int coords, GameObject item) in decorations)
-        {
-            itemList.Add(GameObjectToPlacedObject(item, coords));
-        }
-        saveData.UpdateList(itemList);
+        saveObjects = items.Select((item) => { return ItemToSaveObject(item); }).ToList();
+
+        saveData.UpdateList(saveObjects);
         saveData.Save();
     }
 }
