@@ -1,4 +1,7 @@
 using UnityEngine;
+using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting;
 
 public class SaveManager : MonoBehaviour
 {
@@ -23,46 +26,40 @@ public class SaveManager : MonoBehaviour
         }
 
         saveData = new SaveData();
+    }
 
-        //testing only
-        PlacedObject test1 = new PlacedObject();
-        test1.coordinates.x = 2;
-        test1.coordinates.y = 3;
-        test1.id = 0;
-
-        GameObject testItem = PlacedObjectToGameObject(test1);
-        placementManager.LoadObjectInGame(testItem, test1.coordinates);
-
-        PlacedObject test2 = new PlacedObject();
-        test2.coordinates.x = 4;
-        test2.coordinates.y = 6;
-        test2.id = 1;
-        GameObject testItem2 = PlacedObjectToGameObject(test2);
-        placementManager.LoadObjectInGame(testItem2, test2.coordinates);
-
-        //for ech obj in savedata instantiate GameObject and add it to appropriate layer
-        foreach (PlacedObject obj in saveData.GetPlacedObjects())
+    public void LoadObjectsInGame()
+    {
+        foreach (SaveObject obj in saveData.GetSaveObjects())
         {
-            GameObject item = PlacedObjectToGameObject(obj);
-            placementManager.LoadObjectInGame(item, obj.coordinates);
+            GameObject prefab = objectDatabase.GetPrefabById(obj.prefabId);
+            GameObject itemObj = Instantiate(prefab, new Vector3(0, 0, 0), Quaternion.identity);
+            Item item = itemObj.AddComponent<Item>();
+            item.GridCoordinates = new Vector2Int(0, 0);
+            item.PrefabId = obj.prefabId;
+            item.FloorShape = prefab.GetComponent<FloorShape>().shapeCells;
+            placementManager.PlaceItemObjectAt(itemObj, new Vector2Int(obj.x, obj.y));
         }
     }
 
-    GameObject PlacedObjectToGameObject(PlacedObject placedObject)
+    SaveObject ItemToSaveObject(GameObject itemObj)
     {
-        GameObject prefab = objectDatabase.GetPrefabById(placedObject.id);
-        return Instantiate(prefab, new Vector3(0, 0, 0), Quaternion.identity);
-    }
-
-    void GameObjectToPlacedObject()
-    {
-
+        Item item = itemObj.GetComponent<Item>();
+        return new SaveObject(item.GridCoordinates, item.PrefabId);
     }
 
     public void SaveGame()
     {
+        List<SaveObject> saveObjects = new List<SaveObject>();
+
+        List<GameObject> furniture = placementManager.getFurniture();
+        List<GameObject> decorations = placementManager.getDecorations();
+
+        List<GameObject> items = furniture.Concat(decorations).ToList();
+
+        saveObjects = items.Select((item) => { return ItemToSaveObject(item); }).ToList();
+
+        saveData.UpdateList(saveObjects);
         saveData.Save();
-        //write all objects to SaveData
-        //do we call SaveData.writeToJson here??
     }
 }

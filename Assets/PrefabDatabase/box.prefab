@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 6179917457825199327}
   - component: {fileID: 5835821153834952727}
+  - component: {fileID: -7995508375107809058}
+  - component: {fileID: -2502912189681607514}
   m_Layer: 6
   m_Name: box
   m_TagString: Untagged
@@ -91,3 +93,29 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &-7995508375107809058
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8469429996514636377}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54ce1d33c8f38d441b5428e13a61828c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SortOrder
+  sortPoint: {fileID: 0}
+--- !u!114 &-2502912189681607514
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8469429996514636377}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4232ef368da1034fb7516dc2d665bcb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FloorShape
+  shapeCells: []

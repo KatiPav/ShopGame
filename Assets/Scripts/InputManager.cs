@@ -4,6 +4,7 @@ using UnityEngine.EventSystems;
 public class InputManager : MonoBehaviour
 {
     public event Action OnClick;
+    public event Action OnSave;
 
     void Update()
     {
@@ -11,5 +12,11 @@ public class InputManager : MonoBehaviour
         {
             OnClick?.Invoke();
         }
+    }
+
+    public void onSavePressed()
+    {
+        Debug.Log("onSavePressed is called");
+        OnSave?.Invoke();
     }
 }

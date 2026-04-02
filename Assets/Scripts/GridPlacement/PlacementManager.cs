@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 
 public class PlacementManager : MonoBehaviour
@@ -7,7 +8,7 @@ public class PlacementManager : MonoBehaviour
     [SerializeField]
     Grid isometricGrid;
 
-    GameObject selectedObject;
+    GameObject selectedItem;
 
     FurnitureGridData furnitureGridData = new FurnitureGridData();
     DecorationsGridData decorationsGridData = new DecorationsGridData();
@@ -19,12 +20,19 @@ public class PlacementManager : MonoBehaviour
     {
         if (objectSelected)
         {
-            Vector2Int coords = GetCellCoordinatesOfMousePosition();
-            Vector3 objPosition = isometricGrid.CellToWorld(new Vector3Int(coords.x, coords.y, 0));
-            if (objPosition != lastPosition)
-            {
-                selectedObject.transform.position = objPosition;
-            }
+            UpdatePositionOfPickedUpObject();
+        }
+    }
+
+    private void UpdatePositionOfPickedUpObject()
+    {
+        Vector2Int coords = GetCellCoordinatesOfMousePosition();
+        Vector3 objPosition = isometricGrid.GetCellCenterWorld(new Vector3Int(coords.x, coords.y, 0));
+        if (objPosition != lastPosition)
+        {
+            selectedItem.transform.position = objPosition;
+
+            UpdateSortOrder(selectedItem);
         }
     }
 
@@ -32,40 +40,42 @@ public class PlacementManager : MonoBehaviour
     {
         if (objectSelected)
         {
-            PlaceObject();
+            Vector2Int coords = GetCellCoordinatesOfMousePosition();
+            PlaceItemObjectAt(selectedItem, coords);
+
+            objectSelected = false;
         }
         else
         {
-            PickUpObject();
+            PickUpOItemUnderMouse();
         }
     }
 
-    void PlaceObject()
-    {
-        Vector2Int coords = GetCellCoordinatesOfMousePosition();
-        LoadObjectInGame(selectedObject, coords);
-
-        objectSelected = false;
-        Debug.Log("obj placed");
-    }
-
-    void PickUpObject()
+    void PickUpOItemUnderMouse()
     {
         Vector2Int coords = GetCellCoordinatesOfMousePosition();
 
+        //check which object from the screen we got. get the floor shape and get the 
         Debug.Log("trying to pick up obj at " + coords);
 
-        if (!decorationsGridData.TryPickUpObject(coords, out selectedObject))
+        GameObject i = decorationsGridData.PullItem(coords);
+        if (i != null)
         {
-            if (!furnitureGridData.TryPickUpObject(coords, out selectedObject))
-            {
-                Debug.Log("no object to select");
-                return;
-            }
+            selectedItem = i;
+            objectSelected = true;
+            return;
         }
 
-        objectSelected = true;
-        Debug.Log("obj picked up");
+        i = furnitureGridData.PullItem(coords);
+        if (i != null)
+        {
+            selectedItem = i;
+            objectSelected = true;
+            return;
+        }
+
+        objectSelected = false;
+        Debug.Log("no object to pick up");
     }
 
     private Vector2Int GetCellCoordinatesOfMousePosition()
@@ -75,25 +85,47 @@ public class PlacementManager : MonoBehaviour
         return new Vector2Int(coordinates.x, coordinates.y);
     }
 
-    public void LoadObjectInGame(GameObject obj, Vector2Int coordinates)
+    public Vector2Int WorldToCell(Vector3 worldpos)
     {
-        Vector3 worldPosition = isometricGrid.CellToWorld(new Vector3Int(coordinates.x, coordinates.y, 0));
-        obj.transform.position = worldPosition;
-        AddToAppropriateGrid(obj, coordinates);
-        Debug.Log(obj + "obj should be added to " + coordinates + " at world pos " + worldPosition);
+        Vector3Int coordinates = isometricGrid.WorldToCell(new Vector3(worldpos.x, worldpos.y, 0));
+        return new Vector2Int(coordinates.x, coordinates.y);
     }
 
-    private void AddToAppropriateGrid(GameObject obj, Vector2Int coords)
+    public void PlaceItemObjectAt(GameObject item, Vector2Int position)
     {
-        switch (obj.layer)
+        Vector3 worldPosition = isometricGrid.GetCellCenterWorld(new Vector3Int(position.x, position.y, 0));
+        item.transform.position = worldPosition;
+        UpdateSortOrder(item);
+        item.GetComponent<Item>().GridCoordinates = new Vector2Int(position.x, position.y);
+        AddToAppropriateGrid(item);
+    }
+
+    private void UpdateSortOrder(GameObject obj)
+    {
+        obj.GetComponent<SpriteRenderer>().sortingOrder = -((int)obj.transform.position.y * 1000 + (int)obj.transform.position.x);
+    }
+
+    private void AddToAppropriateGrid(GameObject item)
+    {
+        switch (item.layer)
         {
-            case 6://rename these to understandable constants or enums
-                furnitureGridData.TryPlaceObject(obj, new Vector2Int(coords.x, coords.y));
+            case 7://rename these to understandable constants or enums
+                furnitureGridData.AddItem(item);
                 break;
-            case 7:
-                decorationsGridData.TryPlaceObject(obj, new Vector2Int(coords.x, coords.y));
+            case 6:
+                decorationsGridData.AddItem(item);
                 break;
         }
+    }
+
+    public List<GameObject> getFurniture()
+    {
+        return furnitureGridData.getItems();
+    }
+
+    public List<GameObject> getDecorations()
+    {
+        return decorationsGridData.getItems();
     }
 
 }

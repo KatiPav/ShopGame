@@ -1,27 +1,38 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Linq;
 
 public class BaseGridData
 {
 
-    Dictionary<Vector2Int, GameObject> placedObjects;
+    Dictionary<Vector2Int, Guid> cellIdDictionary;
+    Dictionary<Guid, GameObject> placedItems;
     public BaseGridData()
     {
-        placedObjects = new Dictionary<Vector2Int, GameObject>();
+        cellIdDictionary = new Dictionary<Vector2Int, Guid>();
+        placedItems = new Dictionary<Guid, GameObject>();
     }
 
-    public void TryPlaceObject(GameObject gObj, Vector2Int coordinates)
+    public List<GameObject> getItems()
     {
-        Vector2Int key = new Vector2Int(coordinates.x, coordinates.y);
+        return placedItems.Select((a) => { return a.Value; }).ToList();
+    }
 
-        if (!placedObjects.TryAdd(key, gObj))
+    public void AddItem(GameObject itemObj)
+    {
+        Item item = itemObj.GetComponent<Item>();
+
+        Debug.Log("adding " + item.PrefabId + " at " + item.GridCoordinates);
+        foreach (Vector2Int cell in item.getFloorCells())
         {
-            ThrowDuplicateKeyError();
-
+            cellIdDictionary.Add(cell, item.Id);
         }
+        placedItems.Add(item.Id, itemObj);
 
-        Debug.Log("obj " + gObj + " added at " + coordinates);
+
+        Debug.Log("cellId is ");
+        Debug.Log(string.Join(", ", cellIdDictionary.Keys));
     }
 
     protected virtual void ThrowDuplicateKeyError()
@@ -29,22 +40,28 @@ public class BaseGridData
         Debug.Log("There is something here already. Move it first.");//change this to user messages 
     }
 
-    public void GetObjectAt(int x, int y)
+    public GameObject PullItem(Vector2Int coordinates)
     {
-
-    }
-
-    public bool TryPickUpObject(Vector2Int coordinates, out GameObject obj)
-    {
-        Vector2Int key = new Vector2Int(coordinates.x, coordinates.y);
-        if (!placedObjects.ContainsKey(key))
+        if (!cellIdDictionary.ContainsKey(coordinates))
         {
-            obj = null;
-            return false;
+            Debug.Log("could not remove object");
+            return null;
         }
-        obj = placedObjects[key];
-        placedObjects.Remove(key);
 
-        return true;
+
+        Guid id = cellIdDictionary[coordinates];
+        GameObject itemObj = placedItems[id];
+        Item item = itemObj.GetComponent<Item>();
+        foreach (Vector2Int cell in item.getFloorCells())
+        {
+            cellIdDictionary.Remove(cell);
+        }
+        placedItems.Remove(id);
+
+        Debug.Log("cellId is ");
+        Debug.Log(string.Join(", ", cellIdDictionary.Keys));
+
+        return itemObj;
     }
+
 }
