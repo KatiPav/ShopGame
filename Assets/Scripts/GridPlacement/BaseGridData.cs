@@ -14,54 +14,63 @@ public class BaseGridData
         placedItems = new Dictionary<Guid, GameObject>();
     }
 
+    public bool HasPlacedItem(Vector2Int coords)
+    {
+        return cellIdDictionary.ContainsKey(coords);
+    }
+
     public List<GameObject> getItems()
     {
         return placedItems.Select((a) => { return a.Value; }).ToList();
     }
 
-    public void AddItem(GameObject itemObj)
+    public bool TryAddItem(GameObject itemObj)
     {
         Item item = itemObj.GetComponent<Item>();
+        if (placedItems.ContainsKey(item.Id))
+        {
+            return false;
+        }
 
-        Debug.Log("adding " + item.PrefabId + " at " + item.GridCoordinates);
+        foreach (Vector2Int cell in item.getFloorCells())
+        {
+            if (cellIdDictionary.ContainsKey(cell))
+            {
+                return false;
+            }
+        }
+
+        AddFloorCells(item);
+        placedItems.Add(item.Id, itemObj);
+        return true;
+    }
+
+    public bool TryPullItem(GameObject gObj)
+    {
+
+        Item item = gObj.GetComponent<Item>();
+        if (!placedItems.ContainsKey(item.Id))
+        {
+            Debug.Log("item not in dictionary");
+            return false;
+        }
+        RemoveFloorCells(item);
+        placedItems.Remove(item.Id);
+        return true;
+    }
+
+    private void AddFloorCells(Item item)
+    {
         foreach (Vector2Int cell in item.getFloorCells())
         {
             cellIdDictionary.Add(cell, item.Id);
         }
-        placedItems.Add(item.Id, itemObj);
-
-
-        Debug.Log("cellId is ");
-        Debug.Log(string.Join(", ", cellIdDictionary.Keys));
     }
-
-    protected virtual void ThrowDuplicateKeyError()
+    private void RemoveFloorCells(Item item)
     {
-        Debug.Log("There is something here already. Move it first.");//change this to user messages 
-    }
-
-    public GameObject PullItem(Vector2Int coordinates)
-    {
-        if (!cellIdDictionary.ContainsKey(coordinates))
-        {
-            Debug.Log("could not remove object");
-            return null;
-        }
-
-
-        Guid id = cellIdDictionary[coordinates];
-        GameObject itemObj = placedItems[id];
-        Item item = itemObj.GetComponent<Item>();
         foreach (Vector2Int cell in item.getFloorCells())
         {
             cellIdDictionary.Remove(cell);
         }
-        placedItems.Remove(id);
-
-        Debug.Log("cellId is ");
-        Debug.Log(string.Join(", ", cellIdDictionary.Keys));
-
-        return itemObj;
     }
-
 }

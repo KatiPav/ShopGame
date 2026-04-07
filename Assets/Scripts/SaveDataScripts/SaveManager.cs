@@ -52,8 +52,8 @@ public class SaveManager : MonoBehaviour
     {
         List<SaveObject> saveObjects = new List<SaveObject>();
 
-        List<GameObject> furniture = placementManager.getFurniture();
-        List<GameObject> decorations = placementManager.getDecorations();
+        List<GameObject> furniture = placementManager.gridRegistry.GetFurniture();
+        List<GameObject> decorations = placementManager.gridRegistry.GetDecorations();
 
         List<GameObject> items = furniture.Concat(decorations).ToList();
 

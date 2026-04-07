@@ -10,8 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 8506401009159818217}
   - component: {fileID: 8905482682900578714}
-  - component: {fileID: 3459396698340011298}
   - component: {fileID: 771298855420850746}
+  - component: {fileID: 4917648665171209583}
+  - component: {fileID: -6643243398423167354}
   m_Layer: 6
   m_Name: football
   m_TagString: Untagged
@@ -94,19 +95,6 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!114 &3459396698340011298
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6341092576000612190}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 54ce1d33c8f38d441b5428e13a61828c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SortOrder
-  sortPoint: {fileID: 7740635689873764021}
 --- !u!114 &771298855420850746
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -120,6 +108,54 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloorShape
   shapeCells: []
+--- !u!58 &4917648665171209583
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6341092576000612190}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: -0.01847744, y: 0.29052633}
+  m_Radius: 0.4045822
+--- !u!114 &-6643243398423167354
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6341092576000612190}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ffdb88908d3cbe42845ac8db741d5ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SortOrder
 --- !u!1 &7917634870391645302
 GameObject:
   m_ObjectHideFlags: 0

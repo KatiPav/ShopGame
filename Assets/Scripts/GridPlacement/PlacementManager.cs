@@ -1,6 +1,5 @@
 using UnityEngine;
-using System.Collections.Generic;
-using System;
+
 
 
 public class PlacementManager : MonoBehaviour
@@ -8,75 +7,97 @@ public class PlacementManager : MonoBehaviour
     [SerializeField]
     Grid isometricGrid;
 
-    GameObject selectedItem;
+    GameObject pickedUpItem;
 
-    FurnitureGridData furnitureGridData = new FurnitureGridData();
-    DecorationsGridData decorationsGridData = new DecorationsGridData();
+    public GridRegistry gridRegistry { get; private set; }
 
-    bool objectSelected = false;
+    IPlacementState currentState;
     Vector3Int lastPosition = new Vector3Int(0, 0, 0);
+
+    void Awake()
+    {
+        gridRegistry = new GridRegistry();
+        currentState = new IdleState();
+    }
 
     void Update()
     {
-        if (objectSelected)
-        {
-            UpdatePositionOfPickedUpObject();
-        }
+        currentState.OnUpdate(this);
     }
 
-    private void UpdatePositionOfPickedUpObject()
+    public void UpdatePositionOfPickedUpObject()
     {
         Vector2Int coords = GetCellCoordinatesOfMousePosition();
         Vector3 objPosition = isometricGrid.GetCellCenterWorld(new Vector3Int(coords.x, coords.y, 0));
-        if (objPosition != lastPosition)
+        if (objPosition == lastPosition)
         {
-            selectedItem.transform.position = objPosition;
-
-            UpdateSortOrder(selectedItem);
+            return;
         }
+
+        if (gridRegistry.HasPlacedItem(coords))
+        {
+            return;
+        }
+
+        pickedUpItem.transform.position = objPosition;
+        lastPosition = new Vector3Int(coords.x, coords.y, 0);
+
     }
 
     public void Click()
     {
-        if (objectSelected)
-        {
-            Vector2Int coords = GetCellCoordinatesOfMousePosition();
-            PlaceItemObjectAt(selectedItem, coords);
-
-            objectSelected = false;
-        }
-        else
-        {
-            PickUpOItemUnderMouse();
-        }
+        currentState.OnClick(this);
     }
 
-    void PickUpOItemUnderMouse()
+    public void PlacePickedUpItemAtMousePosition()
     {
         Vector2Int coords = GetCellCoordinatesOfMousePosition();
-
-        //check which object from the screen we got. get the floor shape and get the 
-        Debug.Log("trying to pick up obj at " + coords);
-
-        GameObject i = decorationsGridData.PullItem(coords);
-        if (i != null)
+        if (gridRegistry.HasPlacedItem(coords))
         {
-            selectedItem = i;
-            objectSelected = true;
+            Debug.Log("Cant place here!");
             return;
         }
 
-        i = furnitureGridData.PullItem(coords);
-        if (i != null)
-        {
-            selectedItem = i;
-            objectSelected = true;
-            return;
-        }
+        PlaceItemObjectAt(pickedUpItem, coords);
 
-        objectSelected = false;
-        Debug.Log("no object to pick up");
+        currentState = new IdleState();
+
     }
+
+    private bool TryGetItemUnderMouse(out GameObject item)
+    {
+        Vector3 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        RaycastHit2D hit = Physics2D.Raycast(new Vector2(worldPos.x, worldPos.y), Vector2.zero);//add layer mask later
+
+        if (!hit)
+        {
+            Debug.Log("No colliders under mouse");
+            item = null;
+            return false;
+
+        }
+        if (hit.transform.gameObject.GetComponent<Item>() == null)
+        {
+            Debug.Log("Item under mouse does not have Item component.");
+            item = null;
+            return false;
+        }
+        item = hit.transform.gameObject;
+        return true;
+    }
+
+    public void PickUpItemUnderMouse()
+    {
+        GameObject gObj;
+
+        if (!TryGetItemUnderMouse(out gObj))
+        {
+            return;
+        }
+        pickedUpItem = gridRegistry.PullItem(gObj);
+        currentState = new HoldingState();
+    }
+
 
     private Vector2Int GetCellCoordinatesOfMousePosition()
     {
@@ -93,40 +114,13 @@ public class PlacementManager : MonoBehaviour
 
     public void PlaceItemObjectAt(GameObject item, Vector2Int position)
     {
+        item.GetComponent<Item>().GridCoordinates = new Vector2Int(position.x, position.y);
         Vector3 worldPosition = isometricGrid.GetCellCenterWorld(new Vector3Int(position.x, position.y, 0));
         item.transform.position = worldPosition;
-        UpdateSortOrder(item);
-        item.GetComponent<Item>().GridCoordinates = new Vector2Int(position.x, position.y);
-        AddToAppropriateGrid(item);
+
+        gridRegistry.AddItem(item);
     }
 
-    private void UpdateSortOrder(GameObject obj)
-    {
-        obj.GetComponent<SpriteRenderer>().sortingOrder = -((int)obj.transform.position.y * 1000 + (int)obj.transform.position.x);
-    }
-
-    private void AddToAppropriateGrid(GameObject item)
-    {
-        switch (item.layer)
-        {
-            case 7://rename these to understandable constants or enums
-                furnitureGridData.AddItem(item);
-                break;
-            case 6:
-                decorationsGridData.AddItem(item);
-                break;
-        }
-    }
-
-    public List<GameObject> getFurniture()
-    {
-        return furnitureGridData.getItems();
-    }
-
-    public List<GameObject> getDecorations()
-    {
-        return decorationsGridData.getItems();
-    }
 
 }
 

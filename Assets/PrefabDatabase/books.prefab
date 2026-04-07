@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 935718372468344462}
   - component: {fileID: 2072865870944527348}
-  - component: {fileID: -3299140750552560407}
   - component: {fileID: -4730058668661620643}
+  - component: {fileID: 5821723257280885556}
   m_Layer: 6
   m_Name: books
   m_TagString: Untagged
@@ -93,19 +93,6 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!114 &-3299140750552560407
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5910935915090096579}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 54ce1d33c8f38d441b5428e13a61828c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SortOrder
-  sortPoint: {fileID: 0}
 --- !u!114 &-4730058668661620643
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -119,3 +106,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloorShape
   shapeCells: []
+--- !u!114 &5821723257280885556
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5910935915090096579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ffdb88908d3cbe42845ac8db741d5ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SortOrder
