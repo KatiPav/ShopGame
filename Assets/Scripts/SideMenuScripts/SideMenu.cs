@@ -6,7 +6,7 @@ public class SideMenu : MonoBehaviour
     bool isOpen = false;
 
 
-    public void Awake()
+    public virtual void Awake()
     {
         animator = transform.GetComponent<Animator>();
     }

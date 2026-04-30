@@ -1,20 +1,42 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 public class StorageMenu : SideMenu
 {
-    List<GameObject> boughtItems;
-    public void Start()
-    {
 
+    [SerializeField]
+    CategoryInventory CategoryInventoryPrefab;
+
+    Dictionary<int, CategoryInventory> categoryMap;
+
+    [SerializeField]
+    Inventory inventory;
+
+    public override void Awake()
+    {
+        base.Awake();
+        categoryMap = transform.GetComponentsInChildren<CategoryInventory>().ToDictionary(inv => inv.gameObject.layer, inv => inv);
+        if (categoryMap.Count == 0)
+        {
+            Debug.Log("There are no categories in the inventory!");
+        }
+
+        if (inventory == null)
+        {
+            Debug.Log("Inventory not assigned. Did you forget to reference it in storage menu?");
+        }
+        inventory.OnItemAdded += AddToInventory;
     }
 
-    private void InstantiateStoredItems()
+    public void AddToInventory(GameObject item, int category)
     {
-        foreach (GameObject item in boughtItems)
+        if (categoryMap.TryGetValue(category, out CategoryInventory categoryInventory))
         {
-            Vector3 newPosition = new Vector3(0, 0, 0);
-            Instantiate(item, newPosition, Quaternion.identity, this.transform);
+            categoryInventory.Add(item);
+        }
+        else
+        {
+            Debug.Log("Could not find the category for item.");
         }
     }
-
 }

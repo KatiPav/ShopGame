@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 8506401009159818217}
   - component: {fileID: 8905482682900578714}
-  - component: {fileID: 771298855420850746}
   - component: {fileID: 4917648665171209583}
   - component: {fileID: -6643243398423167354}
+  - component: {fileID: 7743907358788451624}
   m_Layer: 6
   m_Name: football
   m_TagString: Untagged
@@ -95,19 +95,6 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!114 &771298855420850746
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6341092576000612190}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c4232ef368da1034fb7516dc2d665bcb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FloorShape
-  shapeCells: []
 --- !u!58 &4917648665171209583
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -156,6 +143,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ffdb88908d3cbe42845ac8db741d5ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SortOrder
+--- !u!114 &7743907358788451624
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6341092576000612190}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24f4b81c04b145342a3d4ff64ecb0b3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FloorShape
+  shapeCells: []
 --- !u!1 &7917634870391645302
 GameObject:
   m_ObjectHideFlags: 0

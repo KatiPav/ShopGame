@@ -11,7 +11,10 @@ public class SaveManager : MonoBehaviour
     ObjectDatabase objectDatabase;
 
     [SerializeField]
-    PlacementManager placementManager;
+    GridRegistry gridRegistry;
+
+    [SerializeField]
+    GridObjectFactory factory;
 
     public void Awake()
     {
@@ -20,46 +23,36 @@ public class SaveManager : MonoBehaviour
             Debug.Log("ObjectDatabase is not assigned. Did you forget to reference it in SaveManager?");
         }
 
-        if (placementManager == null)
-        {
-            Debug.Log("PlacementManager is not assigned. Did you forget to reference it in SaveManager?");
-        }
-
         saveData = new SaveData();
+        LoadSavedObjectsIntoRegistry();
     }
 
-    public void LoadObjectsInGame()
+    private void LoadSavedObjectsIntoRegistry()
     {
-        foreach (SaveObject obj in saveData.GetSaveObjects())
+        foreach (PlacedObjectDto obj in saveData.saveObjects.placedObjects)
         {
-            GameObject prefab = objectDatabase.GetPrefabById(obj.prefabId);
-            GameObject itemObj = Instantiate(prefab, new Vector3(0, 0, 0), Quaternion.identity);
-            Item item = itemObj.AddComponent<Item>();
-            item.GridCoordinates = new Vector2Int(0, 0);
-            item.PrefabId = obj.prefabId;
-            item.FloorShape = prefab.GetComponent<FloorShape>().shapeCells;
-            placementManager.PlaceItemObjectAt(itemObj, new Vector2Int(obj.x, obj.y));
+            Debug.Log("first " + obj.x + obj.y);
+            GameObject newObj = factory.CreateGridObject(obj);
+            Vector2Int test = newObj.GetComponent<Item>().GridCoordinates;
+            Debug.Log("created object with coords" + test.x + test.y);
+            gridRegistry.AddItem(newObj);
         }
     }
 
-    SaveObject ItemToSaveObject(GameObject itemObj)
+    PlacedObjectDto PlacedObjectToPlacedObjectDto(GameObject itemObj)
     {
         Item item = itemObj.GetComponent<Item>();
-        return new SaveObject(item.GridCoordinates, item.PrefabId);
+        return new PlacedObjectDto(item.GridCoordinates, item.PrefabId);
     }
 
     public void SaveGame()
     {
-        List<SaveObject> saveObjects = new List<SaveObject>();
+        List<GameObject> gridObjects = gridRegistry.GetAllObjects();
+        List<PlacedObjectDto> placedObjectsDtos = gridObjects.Select((item) => { return PlacedObjectToPlacedObjectDto(item); }).ToList();
 
-        List<GameObject> furniture = placementManager.gridRegistry.GetFurniture();
-        List<GameObject> decorations = placementManager.gridRegistry.GetDecorations();
-
-        List<GameObject> items = furniture.Concat(decorations).ToList();
-
-        saveObjects = items.Select((item) => { return ItemToSaveObject(item); }).ToList();
-
-        saveData.UpdateList(saveObjects);
+        Debug.Log("save manager reached");
+        saveData.Clear();
+        saveData.AddObjects(placedObjectsDtos);
         saveData.Save();
     }
 }

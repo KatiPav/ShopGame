@@ -14,15 +14,19 @@ public class Item : MonoBehaviour
     void Awake()
     {
         Id = Guid.NewGuid();
-        GridCoordinates = new Vector2Int(0, 0);
-        FloorShape = new List<Vector2Int>();
     }
+
+    public void Initialize(int prefabId, List<Vector2Int> shape, Vector2Int coordinates)
+    {
+        PrefabId = prefabId;
+        FloorShape = new List<Vector2Int>(shape);
+        GridCoordinates = coordinates;
+    }
+
     public List<Vector2Int> getFloorCells()
     {
         List<Vector2Int> result = FloorShape.Select(coord => GridCoordinates + coord).ToList<Vector2Int>();
         result.Add(GridCoordinates);
         return result;
     }
-
-
 }

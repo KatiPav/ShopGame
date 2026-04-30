@@ -1,9 +1,12 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
-public class GridRegistry
+public class GridRegistry : MonoBehaviour
 {
+    [SerializeField]
+    Grid gridCoordinates;
     FurnitureGridData furnitureGridData = new FurnitureGridData();
     DecorationsGridData decorationsGridData = new DecorationsGridData();
 
@@ -52,5 +55,12 @@ public class GridRegistry
     public List<GameObject> GetDecorations()
     {
         return decorationsGridData.getItems();
+    }
+
+    public List<GameObject> GetAllObjects()
+    {
+        List<GameObject> furniture = furnitureGridData.getItems();
+        List<GameObject> decorations = decorationsGridData.getItems();
+        return furniture.Concat(decorations).ToList();
     }
 }

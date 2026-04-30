@@ -6,18 +6,13 @@ using UnityEngine;
 
 public class SaveData
 {
-    const string SAVEFILE_NAME = "placed_objects.json";
-    List<SaveObject> saveObjects;
+    const string SAVEFILE_NAME = "savefile.json";
+    public GameObjectsSaveData saveObjects { get; private set; }
 
     public SaveData()
     {
-        saveObjects = new List<SaveObject>();
+        saveObjects = new GameObjectsSaveData();
         readJSON();
-    }
-
-    public List<SaveObject> GetSaveObjects()
-    {
-        return saveObjects;
     }
 
     public void Save()
@@ -30,12 +25,26 @@ public class SaveData
         //either creates or writes to existing json all the placedObjects
         string json = JsonConvert.SerializeObject(saveObjects);
         File.WriteAllText(SAVEFILE_NAME, json);
+        Debug.Log("write json reached");
+
     }
 
-    public void UpdateList(List<SaveObject> objList)
+    public void Clear()
     {
-        saveObjects = objList;
+        saveObjects.inventoryObjects.Clear();
+        saveObjects.placedObjects.Clear();
     }
+
+    public void AddObjects(List<PlacedObjectDto> objList)
+    {
+        saveObjects.placedObjects.AddRange(objList);
+    }
+
+    public void AddObjects(List<InventoryObjectDto> objList)
+    {
+        saveObjects.inventoryObjects.AddRange(objList);
+    }
+
 
     void readJSON()
     {
@@ -48,9 +57,9 @@ public class SaveData
 
         string json = "";
         json = File.ReadAllText(SAVEFILE_NAME);
-        saveObjects = JsonConvert.DeserializeObject<List<SaveObject>>(json);
+        saveObjects = JsonConvert.DeserializeObject<GameObjectsSaveData>(json);
 
-        Debug.Log(saveObjects);
+        Debug.Log("placed obj" + saveObjects.placedObjects.Count);
     }
 
 }

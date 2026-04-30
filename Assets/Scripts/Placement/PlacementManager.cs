@@ -1,22 +1,21 @@
 using UnityEngine;
 
-
-
 public class PlacementManager : MonoBehaviour
 {
+
     [SerializeField]
-    Grid isometricGrid;
+    GridRegistry gridRegistry;
 
-    GameObject pickedUpItem;
+    [SerializeField]
+    GridCoordinates gridCoordinates;
 
-    public GridRegistry gridRegistry { get; private set; }
-
+    GameObject pickedUpItem = null;
     IPlacementState currentState;
+
     Vector3Int lastPosition = new Vector3Int(0, 0, 0);
 
     void Awake()
     {
-        gridRegistry = new GridRegistry();
         currentState = new IdleState();
     }
 
@@ -28,13 +27,19 @@ public class PlacementManager : MonoBehaviour
     public void UpdatePositionOfPickedUpObject()
     {
         Vector2Int coords = GetCellCoordinatesOfMousePosition();
-        Vector3 objPosition = isometricGrid.GetCellCenterWorld(new Vector3Int(coords.x, coords.y, 0));
+        Vector3 objPosition = gridCoordinates.GridCoordsToWorldCoords(coords);
+
         if (objPosition == lastPosition)
         {
             return;
         }
 
         if (gridRegistry.HasPlacedItem(coords))
+        {
+            return;
+        }
+
+        if (pickedUpItem == null)
         {
             return;
         }
@@ -94,6 +99,7 @@ public class PlacementManager : MonoBehaviour
         {
             return;
         }
+
         pickedUpItem = gridRegistry.PullItem(gObj);
         currentState = new HoldingState();
     }
@@ -102,25 +108,17 @@ public class PlacementManager : MonoBehaviour
     private Vector2Int GetCellCoordinatesOfMousePosition()
     {
         Vector3 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector3Int coordinates = isometricGrid.WorldToCell(new Vector3(worldPos.x, worldPos.y, 0));
-        return new Vector2Int(coordinates.x, coordinates.y);
-    }
-
-    public Vector2Int WorldToCell(Vector3 worldpos)
-    {
-        Vector3Int coordinates = isometricGrid.WorldToCell(new Vector3(worldpos.x, worldpos.y, 0));
-        return new Vector2Int(coordinates.x, coordinates.y);
+        return gridCoordinates.WorldCoordsToGridCoords(worldPos);
     }
 
     public void PlaceItemObjectAt(GameObject item, Vector2Int position)
     {
+        item.SetActive(true);
         item.GetComponent<Item>().GridCoordinates = new Vector2Int(position.x, position.y);
-        Vector3 worldPosition = isometricGrid.GetCellCenterWorld(new Vector3Int(position.x, position.y, 0));
-        item.transform.position = worldPosition;
+        item.transform.position = gridCoordinates.GridCoordsToWorldCoords(position);
 
         gridRegistry.AddItem(item);
     }
-
 
 }
 

@@ -8,6 +8,7 @@ public class BaseGridData
 
     Dictionary<Vector2Int, Guid> cellIdDictionary;
     Dictionary<Guid, GameObject> placedItems;
+
     public BaseGridData()
     {
         cellIdDictionary = new Dictionary<Vector2Int, Guid>();
@@ -29,6 +30,7 @@ public class BaseGridData
         Item item = itemObj.GetComponent<Item>();
         if (placedItems.ContainsKey(item.Id))
         {
+            Debug.Log("Item already in dictionary 2");
             return false;
         }
 
@@ -36,6 +38,7 @@ public class BaseGridData
         {
             if (cellIdDictionary.ContainsKey(cell))
             {
+                Debug.Log("Item already in dictionary 3");
                 return false;
             }
         }

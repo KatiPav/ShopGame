@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     InputManager inputManager = null;
 
     SaveManager saveManager = null;
+
     void Awake()
     {
         Init();
@@ -20,10 +21,7 @@ public class GameManager : MonoBehaviour
         inputManager.OnClick += placementManager.Click;
         inputManager.OnSave += saveManager.SaveGame;
         //add esc option that returns the object to previous position
-
-        saveManager.LoadObjectsInGame();
     }
-
 
 
     void Init()
