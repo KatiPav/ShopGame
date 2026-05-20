@@ -1,18 +1,24 @@
+using System.Net;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class PlacementManager : MonoBehaviour
 {
+
 
     [SerializeField]
     GridRegistry gridRegistry;
 
     [SerializeField]
-    GridCoordinates gridCoordinates;
+    GridConverter gridConverter;
 
-    GameObject pickedUpItem = null;
+    [SerializeField]
+    TilemapManager tilemapManager;
+
+    Item pickedUpItem = null;
     IPlacementState currentState;
 
-    Vector3Int lastPosition = new Vector3Int(0, 0, 0);
+    Vector2Int lastCoordinates = new Vector2Int(0, 0);
 
     void Awake()
     {
@@ -23,53 +29,50 @@ public class PlacementManager : MonoBehaviour
     {
         currentState.OnUpdate(this);
     }
+    public void Click()
+    {
+        currentState.OnClick(this);
+    }
 
     public void UpdatePositionOfPickedUpObject()
     {
         Vector2Int coords = GetCellCoordinatesOfMousePosition();
-        Vector3 objPosition = gridCoordinates.GridCoordsToWorldCoords(coords);
-
-        if (objPosition == lastPosition)
-        {
-            return;
-        }
-
-        if (gridRegistry.HasPlacedItem(coords))
-        {
-            return;
-        }
 
         if (pickedUpItem == null)
         {
             return;
         }
 
-        pickedUpItem.transform.position = objPosition;
-        lastPosition = new Vector3Int(coords.x, coords.y, 0);
-
-    }
-
-    public void Click()
-    {
-        currentState.OnClick(this);
-    }
-
-    public void PlacePickedUpItemAtMousePosition()
-    {
-        Vector2Int coords = GetCellCoordinatesOfMousePosition();
-        if (gridRegistry.HasPlacedItem(coords))
+        if (coords == lastCoordinates)
         {
-            Debug.Log("Cant place here!");
             return;
         }
 
-        PlaceItemObjectAt(pickedUpItem, coords);
+        if (!gridRegistry.CanPlaceItemAt(coords)) //do we want to move it on the mouse even if not possible to place there?
+        {
+            return;
+        }
 
-        currentState = new IdleState();
+        if (!tilemapManager.CanPlaceItemOnTilemap(pickedUpItem, coords))
+        {
+            return;
+        }
+
+        pickedUpItem.MoveTo(coords, gridConverter);
+        lastCoordinates = coords;
 
     }
 
-    private bool TryGetItemUnderMouse(out GameObject item)
+    public void PlacePickedUpItem()
+    {
+        pickedUpItem.gameObject.SetActive(true);
+        pickedUpItem.MoveTo(lastCoordinates, gridConverter);
+
+        gridRegistry.AddItem(pickedUpItem);
+        currentState = new IdleState();
+    }
+
+    private bool TryGetItemUnderMouse(out Item item)
     {
         Vector3 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         RaycastHit2D hit = Physics2D.Raycast(new Vector2(worldPos.x, worldPos.y), Vector2.zero);//add layer mask later
@@ -79,28 +82,29 @@ public class PlacementManager : MonoBehaviour
             Debug.Log("No colliders under mouse");
             item = null;
             return false;
-
         }
+
         if (hit.transform.gameObject.GetComponent<Item>() == null)
         {
-            Debug.Log("Item under mouse does not have Item component.");
+            Debug.Log("Object under mouse does not have Item component.");
             item = null;
             return false;
         }
-        item = hit.transform.gameObject;
+
+        item = hit.transform.gameObject.GetComponent<Item>();
         return true;
     }
 
-    public void PickUpItemUnderMouse()
+    public void PickUpItem()
     {
-        GameObject gObj;
+        Item item;
 
-        if (!TryGetItemUnderMouse(out gObj))
+        if (!TryGetItemUnderMouse(out item))
         {
             return;
         }
 
-        pickedUpItem = gridRegistry.PullItem(gObj);
+        pickedUpItem = gridRegistry.PullItem(item);
         currentState = new HoldingState();
     }
 
@@ -108,17 +112,7 @@ public class PlacementManager : MonoBehaviour
     private Vector2Int GetCellCoordinatesOfMousePosition()
     {
         Vector3 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        return gridCoordinates.WorldCoordsToGridCoords(worldPos);
+        return gridConverter.WorldCoordsToGridCoords(worldPos);
     }
-
-    public void PlaceItemObjectAt(GameObject item, Vector2Int position)
-    {
-        item.SetActive(true);
-        item.GetComponent<Item>().GridCoordinates = new Vector2Int(position.x, position.y);
-        item.transform.position = gridCoordinates.GridCoordsToWorldCoords(position);
-
-        gridRegistry.AddItem(item);
-    }
-
 }
 

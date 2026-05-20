@@ -31,18 +31,15 @@ public class SaveManager : MonoBehaviour
     {
         foreach (PlacedObjectDto obj in saveData.saveObjects.placedObjects)
         {
-            Debug.Log("first " + obj.x + obj.y);
-            GameObject newObj = factory.CreateGridObject(obj);
-            Vector2Int test = newObj.GetComponent<Item>().GridCoordinates;
-            Debug.Log("created object with coords" + test.x + test.y);
-            gridRegistry.AddItem(newObj);
+            Item item = factory.CreateGridItem(obj);
+            gridRegistry.AddItem(item);
         }
     }
 
     PlacedObjectDto PlacedObjectToPlacedObjectDto(GameObject itemObj)
     {
         Item item = itemObj.GetComponent<Item>();
-        return new PlacedObjectDto(item.GridCoordinates, item.PrefabId);
+        return new PlacedObjectDto(item.GridCoordinates, item.PrefabId, item.ItemType);
     }
 
     public void SaveGame()

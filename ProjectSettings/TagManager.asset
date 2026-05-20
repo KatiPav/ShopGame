@@ -8,12 +8,12 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Item
   - Water
   - UI
   - Decorations
   - Furniture
-  - 
+  - Background
   - 
   - 
   - 
@@ -40,6 +40,12 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Background
+    uniqueID: 1232807425
+    locked: 0
+  - name: Item
+    uniqueID: 2138411087
     locked: 0
   m_RenderingLayers:
   - Default

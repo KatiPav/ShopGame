@@ -1,1 +1,1 @@
-{"placedObjects":[{"x":6,"y":-3,"PrefabId":0},{"x":2,"y":0,"PrefabId":0},{"x":-3,"y":2,"PrefabId":0}],"inventoryObjects":[{"PrefabId": 3, "amount": 3}, {"PrefabId": 2, "amount": 3}, {"PrefabId": 3, "amount": 3}, {"PrefabId": 3, "amount": 3}]}
+{"placedObjects":[{"x":-8,"y":-10,"PrefabId":3,"ItemType":0},{"x":-2,"y":-6,"PrefabId":0,"ItemType":0},{"x":1,"y":-5,"PrefabId":0,"ItemType":0}],"inventoryObjects":[]}

@@ -4,7 +4,7 @@ public class IdleState : IPlacementState
 {
     public void OnClick(PlacementManager manager)
     {
-        manager.PickUpItemUnderMouse();
+        manager.PickUpItem();
     }
 
     public void OnUpdate(PlacementManager manager)

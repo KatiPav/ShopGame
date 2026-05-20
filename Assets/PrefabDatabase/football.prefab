@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 8506401009159818217}
   - component: {fileID: 8905482682900578714}
   - component: {fileID: 4917648665171209583}
-  - component: {fileID: -6643243398423167354}
-  - component: {fileID: 7743907358788451624}
-  m_Layer: 6
+  - component: {fileID: 4274009474415138522}
+  - component: {fileID: 5297983956925716387}
+  - component: {fileID: -2462553285429339167}
+  m_Layer: 3
   m_Name: football
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -81,8 +82,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 2138411087
+  m_SortingLayer: 2
   m_SortingOrder: 252
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: c87c17129392a284ea1a09e631ecb617, type: 3}
@@ -131,7 +132,7 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: -0.01847744, y: 0.29052633}
   m_Radius: 0.4045822
---- !u!114 &-6643243398423167354
+--- !u!114 &4274009474415138522
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -143,7 +144,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ffdb88908d3cbe42845ac8db741d5ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SortOrder
---- !u!114 &7743907358788451624
+--- !u!114 &5297983956925716387
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -155,7 +156,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24f4b81c04b145342a3d4ff64ecb0b3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloorShape
-  shapeCells: []
+  shapeCells:
+  - {x: 0, y: 0}
+--- !u!114 &-2462553285429339167
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6341092576000612190}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40194aa4c352f85408a44851a7d71a6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Item
+  ItemType: 1
 --- !u!1 &7917634870391645302
 GameObject:
   m_ObjectHideFlags: 0
@@ -181,7 +196,7 @@ Transform:
   m_GameObject: {fileID: 7917634870391645302}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.006, y: -0.492, z: 0}
+  m_LocalPosition: {x: -0.029, y: -0.051, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

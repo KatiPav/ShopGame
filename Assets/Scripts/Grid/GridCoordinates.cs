@@ -1,5 +1,5 @@
 using UnityEngine;
-public class GridCoordinates : MonoBehaviour
+public class GridConverter : MonoBehaviour
 {
     [SerializeField]
     Grid grid;

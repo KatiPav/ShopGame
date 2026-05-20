@@ -10,17 +10,17 @@ public class GridRegistry : MonoBehaviour
     FurnitureGridData furnitureGridData = new FurnitureGridData();
     DecorationsGridData decorationsGridData = new DecorationsGridData();
 
-    public GameObject PullItem(GameObject gObj)
+    public Item PullItem(Item item)
     {
-        if (decorationsGridData.TryPullItem(gObj) || furnitureGridData.TryPullItem(gObj))
+        if (decorationsGridData.TryPullItem(item) || furnitureGridData.TryPullItem(item))
         {
-            return gObj;
+            return item;
         }
         Debug.Log("object not in grids!");
         return null;
     }
 
-    public void AddItem(GameObject item)
+    public void AddItem(Item item)
     {
         if (!TryAddToAppropriateGrid(item))
         {
@@ -30,21 +30,21 @@ public class GridRegistry : MonoBehaviour
     }
 
 
-    private bool TryAddToAppropriateGrid(GameObject item)
+    private bool TryAddToAppropriateGrid(Item item)
     {
-        switch (item.layer)
+        switch (item.ItemType)
         {
-            case 7://rename these to understandable constants or enums
+            case ItemType.Furniture:
                 return furnitureGridData.TryAddItem(item);
-            case 6:
+            case ItemType.Decoration:
                 return decorationsGridData.TryAddItem(item);
         }
         return false;
     }
 
-    public bool HasPlacedItem(Vector2Int coords)
+    public bool CanPlaceItemAt(Vector2Int coords)
     {
-        return furnitureGridData.HasPlacedItem(coords) || decorationsGridData.HasPlacedItem(coords);
+        return !furnitureGridData.HasPlacedItem(coords) && !decorationsGridData.HasPlacedItem(coords);
     }
 
     public List<GameObject> GetFurniture()

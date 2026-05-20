@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: 5835821153834952727}
   - component: {fileID: 303853241030038887}
   - component: {fileID: 6592808117367705336}
-  m_Layer: 6
+  - component: {fileID: 763369546289912540}
+  m_Layer: 3
   m_Name: box
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -79,8 +80,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 2138411087
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: 75b0a31e37440a84ba2e682bb757ce13, type: 3}
@@ -117,4 +118,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24f4b81c04b145342a3d4ff64ecb0b3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloorShape
-  shapeCells: []
+  shapeCells:
+  - {x: 0, y: 0}
+--- !u!114 &763369546289912540
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8469429996514636377}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40194aa4c352f85408a44851a7d71a6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Item
+  ItemType: 1

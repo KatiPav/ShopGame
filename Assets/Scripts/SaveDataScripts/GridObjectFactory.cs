@@ -6,19 +6,20 @@ public class GridObjectFactory : MonoBehaviour
     ObjectDatabase objectDatabase;
 
     [SerializeField]
-    GridCoordinates gridCoordinates;
+    GridConverter gridCoordinates;
 
-    public GameObject CreateGridObject(PlacedObjectDto obj)
+    public Item CreateGridItem(PlacedObjectDto obj)
     {
         GameObject prefab = objectDatabase.GetPrefabById(obj.PrefabId);
         prefab.SetActive(true);
         Vector3 position = gridCoordinates.GridCoordsToWorldCoords(new Vector2Int(obj.x, obj.y));
+
         GameObject newObj = GameObject.Instantiate(prefab, position, Quaternion.identity);
-        AddItemComponent(newObj, obj);
-        return newObj;
+        Item item = ConfigureItemComponent(newObj, obj);
+        return item;
     }
 
-    private void AddItemComponent(GameObject itemObj, PlacedObjectDto obj)
+    private Item ConfigureItemComponent(GameObject itemObj, PlacedObjectDto obj)
     {
         Item item = itemObj.GetComponent<Item>();
 
@@ -27,14 +28,7 @@ public class GridObjectFactory : MonoBehaviour
             item = itemObj.AddComponent<Item>();
         }
 
-        var floorShape = itemObj.GetComponent<FloorShape>();
-
-        if (floorShape == null)
-        {
-            Debug.LogError("Missing FloorShape!");
-            return;
-        }
-
-        item.Initialize(obj.PrefabId, floorShape.shapeCells, new Vector2Int(obj.x, obj.y));
+        item.Initialize(obj.PrefabId, obj.ItemType, new Vector2Int(obj.x, obj.y));
+        return item;
     }
 }

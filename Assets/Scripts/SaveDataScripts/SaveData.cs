@@ -46,7 +46,7 @@ public class SaveData
     }
 
 
-    void readJSON()
+    void readJSON() //using???
     {
         //reads from existing json and fills saveObjects
         if (!File.Exists(SAVEFILE_NAME))
@@ -59,7 +59,7 @@ public class SaveData
         json = File.ReadAllText(SAVEFILE_NAME);
         saveObjects = JsonConvert.DeserializeObject<GameObjectsSaveData>(json);
 
-        Debug.Log("placed obj" + saveObjects.placedObjects.Count);
+        Debug.Log("save data prepared " + saveObjects.placedObjects.Count + " objects for placing");
     }
 
 }

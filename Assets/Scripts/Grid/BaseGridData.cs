@@ -25,16 +25,15 @@ public class BaseGridData
         return placedItems.Select((a) => { return a.Value; }).ToList();
     }
 
-    public bool TryAddItem(GameObject itemObj)
+    public bool TryAddItem(Item item)
     {
-        Item item = itemObj.GetComponent<Item>();
         if (placedItems.ContainsKey(item.Id))
         {
             Debug.Log("Item already in dictionary 2");
             return false;
         }
 
-        foreach (Vector2Int cell in item.getFloorCells())
+        foreach (Vector2Int cell in item.FloorShape.GetFloorCells())
         {
             if (cellIdDictionary.ContainsKey(cell))
             {
@@ -44,14 +43,13 @@ public class BaseGridData
         }
 
         AddFloorCells(item);
-        placedItems.Add(item.Id, itemObj);
+        placedItems.Add(item.Id, item.gameObject);
+        Debug.Log("added whole item to grid registry with id" + item.Id);
         return true;
     }
 
-    public bool TryPullItem(GameObject gObj)
+    public bool TryPullItem(Item item)
     {
-
-        Item item = gObj.GetComponent<Item>();
         if (!placedItems.ContainsKey(item.Id))
         {
             Debug.Log("item not in dictionary");
@@ -64,16 +62,20 @@ public class BaseGridData
 
     private void AddFloorCells(Item item)
     {
-        foreach (Vector2Int cell in item.getFloorCells())
+        Debug.Log("trying to add item with origin coords " + item.GridCoordinates.x + ", " + item.GridCoordinates.y);
+        foreach (Vector2Int cell in item.FloorShape.GetFloorCells())
         {
+
+            Debug.Log("adding " + cell.x + "," + cell.y);
             cellIdDictionary.Add(cell, item.Id);
         }
     }
     private void RemoveFloorCells(Item item)
     {
-        foreach (Vector2Int cell in item.getFloorCells())
+        foreach (Vector2Int cell in item.FloorShape.GetFloorCells())
         {
             cellIdDictionary.Remove(cell);
         }
     }
 }
+

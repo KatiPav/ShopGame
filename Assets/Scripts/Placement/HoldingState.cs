@@ -4,7 +4,7 @@ public class HoldingState : IPlacementState
 {
     public void OnClick(PlacementManager manager)
     {
-        manager.PlacePickedUpItemAtMousePosition();
+        manager.PlacePickedUpItem();
     }
 
     public void OnUpdate(PlacementManager manager)
