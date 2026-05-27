@@ -21,10 +21,9 @@ public class Item : MonoBehaviour
         FloorShape = GetComponent<FloorShape>();
     }
 
-    public void Initialize(int prefabId, ItemType itemType, Vector2Int coordinates)
+    public void Initialize(int prefabId, Vector2Int coordinates)
     {
         PrefabId = prefabId;
-        ItemType = itemType;
         GridCoordinates = coordinates;
     }
     public void MoveTo(Vector2Int coords, GridConverter gridConverter)

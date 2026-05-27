@@ -37,9 +37,14 @@ public class FloorShape : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
+        if (grid == null)
+        {
+            grid = FindAnyObjectByType<Grid>();
+        }
         Vector2Int origin = GetOriginCell();
+
         List<Vector2Int> gridCoordinates = shapeCells.Select(coord => origin + coord).ToList<Vector2Int>();
-        gridCoordinates.Add(origin);
+
         Gizmos.color = new Color(0.2f, 0.6f, 1f, 0.8f);
         foreach (Vector2Int coord in gridCoordinates)
         {

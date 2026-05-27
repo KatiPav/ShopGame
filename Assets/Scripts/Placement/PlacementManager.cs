@@ -1,11 +1,10 @@
+using System;
 using System.Net;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
 public class PlacementManager : MonoBehaviour
 {
-
-
     [SerializeField]
     GridRegistry gridRegistry;
 
@@ -17,6 +16,8 @@ public class PlacementManager : MonoBehaviour
 
     Item pickedUpItem = null;
     IPlacementState currentState;
+
+    public event Action<Item> OnItemMoved;
 
     Vector2Int lastCoordinates = new Vector2Int(0, 0);
 
@@ -59,6 +60,7 @@ public class PlacementManager : MonoBehaviour
         }
 
         pickedUpItem.MoveTo(coords, gridConverter);
+        OnItemMoved?.Invoke(pickedUpItem);
         lastCoordinates = coords;
 
     }
@@ -75,7 +77,7 @@ public class PlacementManager : MonoBehaviour
     private bool TryGetItemUnderMouse(out Item item)
     {
         Vector3 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        RaycastHit2D hit = Physics2D.Raycast(new Vector2(worldPos.x, worldPos.y), Vector2.zero);//add layer mask later
+        RaycastHit2D hit = Physics2D.Raycast(new Vector2(worldPos.x, worldPos.y), Vector2.zero, LayerMask.GetMask("Item"));//add layer mask later
 
         if (!hit)
         {
