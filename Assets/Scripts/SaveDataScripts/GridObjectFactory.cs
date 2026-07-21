@@ -28,7 +28,7 @@ public class GridObjectFactory : MonoBehaviour
             item = itemObj.AddComponent<Item>();
         }
 
-        item.Initialize(obj.PrefabId, obj.ItemType, new Vector2Int(obj.x, obj.y));
+        item.Initialize(obj.PrefabId, new Vector2Int(obj.x, obj.y));
         return item;
     }
 }

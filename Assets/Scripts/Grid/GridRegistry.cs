@@ -42,9 +42,15 @@ public class GridRegistry : MonoBehaviour
         return false;
     }
 
-    public bool CanPlaceItemAt(Vector2Int coords)
+    public bool CanPlaceItemAt(Vector2Int coords, Item item)
     {
-        return !furnitureGridData.HasPlacedItem(coords) && !decorationsGridData.HasPlacedItem(coords);
+
+        foreach(Vector2Int cell in item.FloorShape.GetFloorCellsWithOrigin(coords))
+        {
+            if(furnitureGridData.HasPlacedItem(cell)) return false;
+            if(decorationsGridData.HasPlacedItem(cell)) return false;
+        }
+        return true;
     }
 
     public List<GameObject> GetFurniture()

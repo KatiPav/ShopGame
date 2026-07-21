@@ -15,7 +15,7 @@ TagManager:
   - Furniture
   - Background
   - 
-  - 
+  - Clickable
   - 
   - 
   - 
@@ -46,6 +46,9 @@ TagManager:
     locked: 0
   - name: Item
     uniqueID: 2138411087
+    locked: 0
+  - name: UI
+    uniqueID: 1012799723
     locked: 0
   m_RenderingLayers:
   - Default

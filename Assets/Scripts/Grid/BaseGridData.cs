@@ -52,7 +52,13 @@ public class BaseGridData
     {
         if (!placedItems.ContainsKey(item.Id))
         {
-            Debug.Log("item not in dictionary");
+            Debug.Log("item " + item.Id + " not in dictionary" + GetName());
+            Debug.Log("dictionary " + GetName() + " contains ");
+
+            foreach (KeyValuePair<Guid, GameObject> ob in placedItems)
+            {
+                Debug.Log(ob.Key);
+            }
             return false;
         }
         RemoveFloorCells(item);
@@ -76,6 +82,11 @@ public class BaseGridData
         {
             cellIdDictionary.Remove(cell);
         }
+    }
+
+    protected virtual string GetName()
+    {
+        return "BaseGridData";
     }
 }
 

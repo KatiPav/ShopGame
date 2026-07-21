@@ -46,7 +46,7 @@ public class SaveData
     }
 
 
-    void readJSON() //using???
+    void readJSON()
     {
         //reads from existing json and fills saveObjects
         if (!File.Exists(SAVEFILE_NAME))

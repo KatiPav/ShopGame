@@ -1,6 +1,7 @@
 using System.Net;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using System;
 
 public class PlacementManager : MonoBehaviour
 {
@@ -15,14 +16,22 @@ public class PlacementManager : MonoBehaviour
     [SerializeField]
     TilemapManager tilemapManager;
 
-    Item pickedUpItem = null;
+    Item pickedUpItem = null; 
     IPlacementState currentState;
+
+    public Action<Item> OnItemMoved;
 
     Vector2Int lastCoordinates = new Vector2Int(0, 0);
 
     void Awake()
     {
         currentState = new IdleState();
+
+        if(tilemapManager == null)
+        {
+            Debug.Log("Tilemap manager is not set!");
+            return;
+        }
     }
 
     void Update()
@@ -48,7 +57,7 @@ public class PlacementManager : MonoBehaviour
             return;
         }
 
-        if (!gridRegistry.CanPlaceItemAt(coords)) //do we want to move it on the mouse even if not possible to place there?
+        if (!gridRegistry.CanPlaceItemAt(coords, pickedUpItem)) //do we want to move it on the mouse even if not possible to place there?
         {
             return;
         }
@@ -59,6 +68,14 @@ public class PlacementManager : MonoBehaviour
         }
 
         pickedUpItem.MoveTo(coords, gridConverter);
+        if(OnItemMoved != null) {
+           // OnItemMoved(pickedUpItem);
+        }
+        else
+        {
+            Debug.Log("why tf is it null?");
+
+        }
         lastCoordinates = coords;
 
     }

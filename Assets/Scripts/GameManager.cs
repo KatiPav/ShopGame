@@ -4,11 +4,14 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    PlacementManager placementManager = null;
+    [SerializeField]
+    PlacementManager placementManager;
 
-    InputManager inputManager = null;
+[SerializeField]
+    InputManager inputManager;
 
-    SaveManager saveManager = null;
+[SerializeField]
+    SaveManager saveManager;
 
     void Awake()
     {
@@ -26,9 +29,6 @@ public class GameManager : MonoBehaviour
 
     void Init()
     {
-        placementManager = GetComponent<PlacementManager>();
-        inputManager = GetComponent<InputManager>();
-        saveManager = GetComponent<SaveManager>();
 
         if (placementManager == null)
         {
