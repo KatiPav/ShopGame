@@ -5,7 +5,7 @@ using System;
 
 public class PlacementManager : MonoBehaviour
 {
-    //slowly going crazy
+
     [SerializeField]
     GridRegistry gridRegistry;
 
