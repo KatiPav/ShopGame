@@ -56,7 +56,7 @@ public class PlacementManager : MonoBehaviour
             return;
         }
 
-        if (!gridRegistry.CanPlaceItemAt(coords, pickedUpItem)) //do we want to move it on the mouse even if not possible to place there?
+        if (!CanPlaceInOrAraound(coords, out coords))
         {
             return;
         }
@@ -79,6 +79,36 @@ public class PlacementManager : MonoBehaviour
 
     }
 
+private bool CanPlaceInOrAraound(Vector2Int coords, out Vector2Int outCoords)
+    {
+                Vector2Int[] offsets =
+        {
+            new Vector2Int(0,0),
+            new Vector2Int(-1, -1),
+            new Vector2Int(0, -1),
+            new Vector2Int(1, -1),
+            new Vector2Int(-1, 0),
+            new Vector2Int(1, 0),
+            new Vector2Int(-1, 1),
+            new Vector2Int(0, 1),
+            new Vector2Int(1, 1)
+        };
+
+        bool canPlace = false;
+        outCoords = coords;
+        foreach (Vector2Int offset in offsets)
+        {
+            Vector2Int newCoords = coords + offset;
+
+            if (gridRegistry.CanPlaceItemAt(newCoords, pickedUpItem))
+            {
+                canPlace = true;
+                outCoords = newCoords;
+                break;
+            }
+        }
+        return canPlace;
+    }
     public void PlacePickedUpItem()
     {
         pickedUpItem.gameObject.SetActive(true);
