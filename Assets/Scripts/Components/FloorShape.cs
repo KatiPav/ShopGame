@@ -8,6 +8,13 @@ public class FloorShape : MonoBehaviour
     Grid grid;
     public List<Vector2Int> shapeCells;
 
+    //the leftmost and rightmost cell
+    private Vector2Int MinX;
+    private Vector2Int MaxX;
+
+    private Vector2Int MinY;
+    private Vector2Int MaxY;
+
     public void Awake()
     {
         grid = FindAnyObjectByType<Grid>();
@@ -15,7 +22,32 @@ public class FloorShape : MonoBehaviour
         {
             Debug.Log("Floor shape could not find the grid.");
         }
+
+        if (shapeCells.Count > 0)
+        {
+
+            foreach (var cell in shapeCells)
+            {
+                if (cell.x < MinX.x)
+                {
+                    MinX = cell;
+                }
+                if (cell.x > MaxX.x)
+                {
+                    MaxX = cell;
+                }
+                if (cell.y < MinY.y)
+                {
+                    MinY = cell;
+                }
+                if (cell.y > MaxY.y)
+                {
+                    MaxY = cell;
+                }
+            }
+        }
     }
+
 
     public List<Vector2Int> GetFloorCells()
     {
@@ -26,6 +58,24 @@ public class FloorShape : MonoBehaviour
     public List<Vector2Int> GetFloorCellsWithOrigin(Vector2Int origin)
     {
         return shapeCells.Select(coord => origin + coord).ToList();
+    }
+
+    public Vector2Int GetMinXWithOrigin(Vector2Int origin)
+    {
+        return MinX + origin;
+    }
+
+    public Vector2Int GetMinYWithOrigin(Vector2Int origin)
+    {
+        return MinY + origin;
+    }
+    public Vector2Int GetMaxXWithOrigin(Vector2Int origin)
+    {
+        return MaxX + origin;
+    }
+    public Vector2Int GetMaxYWithOrigin(Vector2Int origin)
+    {
+        return MaxY + origin;
     }
 
     private Vector2Int GetOriginCell()

@@ -13,15 +13,10 @@ public class Item : MonoBehaviour
     public int PrefabId { get; set; }
 
     public FloorShape FloorShape { get; set; }
-    private Grid GameGrid {get;set;}
+    private Grid GameGrid { get; set; }
 
-    Collider2D Collider2D {get;set;}
+    Collider2D Collider2D { get; set; }
 
-
-    //these measurements are all in grid squares count
-    private float height;
-    private float width;
-    private float depth;
 
     void Awake()
     {
@@ -48,6 +43,23 @@ public class Item : MonoBehaviour
         GridCoordinates = coords;
     }
 
+    public Vector2Int GetMinXSquare()
+    {
+        return FloorShape.GetMinXWithOrigin(GridCoordinates);
+    }
+
+    public Vector2Int GetMinYSquare()
+    {
+        return FloorShape.GetMinYWithOrigin(GridCoordinates);
+    }
+    public Vector2Int GetMaxXSquare()
+    {
+        return FloorShape.GetMaxXWithOrigin(GridCoordinates);
+    }
+    public Vector2Int GetMaxYSquare()
+    {
+        return FloorShape.GetMaxYWithOrigin(GridCoordinates);
+    }
     // private void CalculateMeasurments(){
     //     Vector2Int back;
     //     Vector2Int front;
@@ -65,6 +77,6 @@ public class Item : MonoBehaviour
 
     //     }
 
-        
+
     // }
 }

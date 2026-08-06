@@ -15,7 +15,7 @@ public class PlacementManager : MonoBehaviour
     [SerializeField]
     TilemapManager tilemapManager;
 
-    Item pickedUpItem = null; 
+    Item pickedUpItem = null;
     IPlacementState currentState;
 
     public Action<Item> OnItemMoved;
@@ -26,7 +26,7 @@ public class PlacementManager : MonoBehaviour
     {
         currentState = new IdleState();
 
-        if(tilemapManager == null)
+        if (tilemapManager == null)
         {
             Debug.Log("Tilemap manager is not set!");
             return;
@@ -67,22 +67,24 @@ public class PlacementManager : MonoBehaviour
         }
 
         pickedUpItem.MoveTo(coords, gridConverter);
-        if(OnItemMoved != null) {
-           // OnItemMoved(pickedUpItem);
+        lastCoordinates = coords;
+
+        if (OnItemMoved != null)
+        {
+            OnItemMoved(pickedUpItem);
         }
         else
         {
             Debug.Log("why tf is it null?");
 
         }
-        lastCoordinates = coords;
 
     }
 
-private bool CanPlaceInOrAraound(Vector2Int coords, out Vector2Int outCoords)
+    private bool CanPlaceInOrAraound(Vector2Int coords, out Vector2Int outCoords)
     {
-                Vector2Int[] offsets =
-        {
+        Vector2Int[] offsets =
+{
             new Vector2Int(0,0),
             new Vector2Int(-1, -1),
             new Vector2Int(0, -1),

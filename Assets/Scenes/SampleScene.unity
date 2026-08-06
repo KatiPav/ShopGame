@@ -11040,9 +11040,10 @@ GameObject:
   - component: {fileID: 1824566723}
   - component: {fileID: 1824566724}
   - component: {fileID: 1824566727}
-  - component: {fileID: 1824566726}
   - component: {fileID: 1824566728}
   - component: {fileID: 1824566729}
+  - component: {fileID: 1824566731}
+  - component: {fileID: 1824566732}
   m_Layer: 0
   m_Name: GameManagers
   m_TagString: Untagged
@@ -11077,21 +11078,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de9ef7f0ebc199c4a98571336d2a4429, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
---- !u!114 &1824566726
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1824566721}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd3110fd3bfbfee4a81826f01e39734b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlacementManager
-  gridRegistry: {fileID: 1262472691}
-  gridConverter: {fileID: 1509539911}
-  tilemapManager: {fileID: 1824566729}
+  placementManager: {fileID: 1824566732}
+  inputManager: {fileID: 1824566728}
+  saveManager: {fileID: 1824566727}
 --- !u!114 &1824566727
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11133,6 +11122,35 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TilemapManager
   wallTilemap: {fileID: 1163506395}
   floorTilemap: {fileID: 556862509}
+--- !u!114 &1824566731
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1824566721}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 973bf4f7d2105394cb0f07a13a7461fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SortingGraph
+  placementManager: {fileID: 1824566732}
+  factory: {fileID: 526090194}
+--- !u!114 &1824566732
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1824566721}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd3110fd3bfbfee4a81826f01e39734b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlacementManager
+  gridRegistry: {fileID: 1262472691}
+  gridConverter: {fileID: 1509539911}
+  tilemapManager: {fileID: 1824566729}
 --- !u!1 &1868134700
 GameObject:
   m_ObjectHideFlags: 0

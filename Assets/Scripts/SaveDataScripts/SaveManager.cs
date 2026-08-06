@@ -24,7 +24,12 @@ public class SaveManager : MonoBehaviour
         }
 
         saveData = new SaveData();
+    }
+
+    public void Start()
+    {
         LoadSavedObjectsIntoRegistry();
+
     }
 
     private void LoadSavedObjectsIntoRegistry()

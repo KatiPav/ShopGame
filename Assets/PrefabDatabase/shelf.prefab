@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 7802362138058210745}
   - component: {fileID: 3707018078216564885}
   - component: {fileID: 5931611433500939028}
-  - component: {fileID: 7287967134503801889}
   - component: {fileID: 8148510546844972752}
   m_Layer: 3
   m_Name: shelf
@@ -180,18 +179,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Item
   ItemType: 0
---- !u!114 &7287967134503801889
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4876944645861458374}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ffdb88908d3cbe42845ac8db741d5ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SortOrder
 --- !u!114 &8148510546844972752
 MonoBehaviour:
   m_ObjectHideFlags: 0

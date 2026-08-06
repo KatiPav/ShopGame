@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 public class GridObjectFactory : MonoBehaviour
 {
@@ -8,6 +9,8 @@ public class GridObjectFactory : MonoBehaviour
     [SerializeField]
     GridConverter gridCoordinates;
 
+    public Action<Item> onItemCreated;
+
     public Item CreateGridItem(PlacedObjectDto obj)
     {
         GameObject prefab = objectDatabase.GetPrefabById(obj.PrefabId);
@@ -16,6 +19,8 @@ public class GridObjectFactory : MonoBehaviour
 
         GameObject newObj = GameObject.Instantiate(prefab, position, Quaternion.identity);
         Item item = ConfigureItemComponent(newObj, obj);
+
+        onItemCreated?.Invoke(item);
         return item;
     }
 
