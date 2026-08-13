@@ -7,7 +7,6 @@ public class SortingGraphNode : MonoBehaviour
     Item item;
     SpriteRenderer spRenderer;
 
-
     public List<SortingGraphNode> edges;
 
     void Awake()
@@ -27,9 +26,9 @@ public class SortingGraphNode : MonoBehaviour
         edges = new List<SortingGraphNode>();
     }
 
-    public void Start()
+    public Bounds GetSpRendererBounds()
     {
-        UpdateEdges();
+        return spRenderer.bounds;
     }
 
 
@@ -39,63 +38,28 @@ public class SortingGraphNode : MonoBehaviour
         return nodeToRemove;
     }
 
-    public void SeparateNodeFromGraph()
+    public void UpdateEdgesWithOverlaps(List<SortingGraphNode> overlaps)
     {
-        List<Item> overlaps = Physics2D.OverlapAreaAll(spRenderer.bounds.min, spRenderer.bounds.max)
-        .Select(collider => collider.gameObject.GetComponent<Item>())
-        .ToList();
-
-        foreach (var otherItem in overlaps)
-        {
-            if (otherItem == item)
-            { //dont compare with itself
-                continue;
-            }
-        }
-
-
-    }
-
-    public List<SortingGraphNode> GetOverlappingNodes()
-    {
-        List<SortingGraphNode> overlaps = Physics2D.OverlapAreaAll(spRenderer.bounds.min, spRenderer.bounds.max)
-            .Select(collider => collider.gameObject.GetComponent<SortingGraphNode>())
-            .Where(collider => collider.gameObject != gameObject)
-            .Where(item => item != null)
-            .ToList();
-
-        return overlaps;
-    }
-
-    public void UpdateEdges()
-    {
-        List<SortingGraphNode> overlaps = GetOverlappingNodes();
-
-        Debug.Log("Trying to update edges. Found overlaps: " + (overlaps.Count - 1));
-
-
         edges.Clear();
         foreach (var node in overlaps)
         {
             Item otherItem = node.gameObject.GetComponent<Item>();
+            if (gameObject == otherItem.gameObject)
+            {
+                continue;
+            }
 
             //if the object should be on top of the other then an edge should exist
-            if (!ShouldBeBelow(item, otherItem))
+            if (ShouldBeOnTop(item, otherItem))
             {
-                if (node == null)
-                {
-                    Debug.Log("Comparison item does not have Sorting graph node component!");
-                    return;
-                }
+
                 edges.Add(node);
-                Debug.Log("edges has num of elements:" + edges.Count);
             }
         }
-
     }
 
 
-    bool ShouldBeBelow(Item item, Item otherItem)
+    bool ShouldBeOnTop(Item item, Item otherItem)
     {
         float minX = item.GetMinXSquare().x - 0.5f;
         float minY = item.GetMinYSquare().y - 0.5f;
@@ -107,12 +71,12 @@ public class SortingGraphNode : MonoBehaviour
         float otherMaxX = otherItem.GetMaxXSquare().x + 0.5f;
         float otherMaxY = otherItem.GetMaxYSquare().y + 0.5f;
 
-        Debug.Log("Comparing " + item.gameObject.name + " and  oth " + otherItem.gameObject.name);
-        Debug.Log(item.name + " has minx " + minX + "and miny " + minY);
-        Debug.Log(otherItem.name + " has othminx " + otherMinX + "and othminy " + otherMinY);
+        // Debug.Log("Comparing " + item.gameObject.name + " and  oth " + otherItem.gameObject.name);
+        // Debug.Log(item.name + " has minx " + minX + "and miny " + minY);
+        // Debug.Log(otherItem.name + " has othminx " + otherMinX + "and othminy " + otherMinY);
 
-        Debug.Log(item.name + " has maxx " + maxX + "and maxy " + maxY);
-        Debug.Log(otherItem.name + " has othmaxx " + otherMaxX + "and othmaxy " + otherMaxY);
+        // Debug.Log(item.name + " has maxx " + maxX + "and maxy " + maxY);
+        // Debug.Log(otherItem.name + " has othmaxx " + otherMaxX + "and othmaxy " + otherMaxY);
 
         //we check on which axis the two objects do not intersect, 
         // if they do not then you can add a plane separating them
@@ -121,12 +85,11 @@ public class SortingGraphNode : MonoBehaviour
         // (lower x value is in front)
         if (minX >= otherMaxX)
         {
-            Debug.Log("1");
             return false;
         }
         else if (otherMinX >= maxX)
         {
-            Debug.Log("2");
+            Debug.Log(item.name + "should be on top of " + otherItem.name);
 
             return true;
         }
@@ -135,14 +98,12 @@ public class SortingGraphNode : MonoBehaviour
         // (lower y value is in front)
         if (minY >= otherMaxY)
         {
-            Debug.Log("3");
 
             return false;
         }
         else if (otherMinY >= maxY)
         {
-            Debug.Log("4");
-
+            Debug.Log(item.name + "should be on top of " + otherItem.name);
             return true;
         }
 

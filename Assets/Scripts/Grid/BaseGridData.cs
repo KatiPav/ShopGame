@@ -68,11 +68,11 @@ public class BaseGridData
 
     private void AddFloorCells(Item item)
     {
-        Debug.Log("trying to add item with origin coords " + item.GridCoordinates.x + ", " + item.GridCoordinates.y);
+        //Debug.Log("trying to add item with origin coords " + item.GridCoordinates.x + ", " + item.GridCoordinates.y);
         foreach (Vector2Int cell in item.FloorShape.GetFloorCells())
         {
 
-            Debug.Log("adding " + cell.x + "," + cell.y);
+            //Debug.Log("adding " + cell.x + "," + cell.y);
             cellIdDictionary.Add(cell, item.Id);
         }
     }

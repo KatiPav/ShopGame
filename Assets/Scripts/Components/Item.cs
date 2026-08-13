@@ -17,15 +17,23 @@ public class Item : MonoBehaviour
 
     Collider2D Collider2D { get; set; }
 
+    Rigidbody2D RB { get; set; }
+
 
     void Awake()
     {
         Id = Guid.NewGuid();
         FloorShape = GetComponent<FloorShape>();
+        RB = GetComponent<Rigidbody2D>();
         GameGrid = FindAnyObjectByType<Grid>();
         if (GameGrid == null)
         {
             Debug.Log("Item could not find the grid.");
+        }
+
+        if (RB == null)
+        {
+            Debug.Log("Item could not find its RigidBody2D.");
         }
     }
 
@@ -39,6 +47,12 @@ public class Item : MonoBehaviour
 
     public void MoveTo(Vector2Int coords, GridConverter gridConverter)
     {
+        Vector3 worldPos = gridConverter.GridCoordsToWorldCoords(coords);
+        //RB.MovePosition(new Vector2(worldPos.x, worldPos.y)); 
+        // TODO: fix this as soon as possible, 
+        // treat it as a physics object and remove the SyncTransforms in Sorting!!!
+
+
         gameObject.transform.position = gridConverter.GridCoordsToWorldCoords(coords);
         GridCoordinates = coords;
     }

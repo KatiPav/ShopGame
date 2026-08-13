@@ -2,6 +2,11 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
+
+//This graph is used to determine the order in which the items need to be drawn on the screen.
+//The nodes are the game objects and there is a directed edge between 2 nodes if one needs to be on top of the other.
+//It keeps track of any object movement and updates dynamically. 
+//At the end it creates a topological ordering that is used to set the sortOrder in Unity.
 public class SortingGraph : MonoBehaviour
 {
     [SerializeField]
@@ -10,49 +15,73 @@ public class SortingGraph : MonoBehaviour
     [SerializeField]
     GridObjectFactory factory;
 
+    [SerializeField]
+    GridConverter gridConverter;
+
     List<SortingGraphNode> nodes = new List<SortingGraphNode>();
 
     List<SortingGraphNode> topologicalOrdering = new List<SortingGraphNode>();
 
     void Awake()
     {
-
-        //grab all nodes and put them in the list
-
         factory.onItemCreated += CreateSortingNode;
-        placementManager.OnItemMoved += UpdateSortingOrderWithItem;
+        placementManager.OnItemMoved += UpdateGraphForItemMoved;
     }
 
     void OnDestroy()
     {
-        placementManager.OnItemMoved -= UpdateSortingOrderWithItem;
+        factory.onItemCreated -= CreateSortingNode;
+        placementManager.OnItemMoved -= UpdateGraphForItemMoved;
     }
 
     void CreateSortingNode(Item item)
     {
         SortingGraphNode node = item.gameObject.AddComponent<SortingGraphNode>();
+
+        UpdateOrderingWithinBounds(node.GetSpRendererBounds());
         nodes.Add(node);
+
         UpdateOrdering();
     }
 
-    void UpdateSortingOrderWithItem(Item item)
+    void UpdateOrderingWithinBounds(Bounds bounds)
     {
-        //i need to remove all the old references to this node 
-        SortingGraphNode itemNode = item.gameObject.GetComponent<SortingGraphNode>();
-        foreach (var overlapNode in itemNode.GetOverlappingNodes())
+        Physics2D.SyncTransforms();
+
+        List<SortingGraphNode> overlaps = Physics2D.OverlapAreaAll(bounds.min, bounds.max)
+        .Select(collider => collider.gameObject.GetComponent<SortingGraphNode>())
+        .Where(n => n != null)
+        .ToList();
+
+
+        foreach (var item in overlaps)
         {
-            overlapNode.RemoveFromEdges(itemNode);
-            overlapNode.UpdateEdges();
+            Bounds otherBounds = item.GetSpRendererBounds();
+            List<SortingGraphNode> otherItemOverlaps = Physics2D.OverlapAreaAll(otherBounds.min, otherBounds.max)
+            .Select(collider => collider.gameObject.GetComponent<SortingGraphNode>())
+            .Where(n => n != null)
+            .ToList();
+            Debug.Log("updating" + item.name + " has " + otherItemOverlaps.Count + " overlaps under it.");
+            item.UpdateEdgesWithOverlaps(otherItemOverlaps);
         }
-        itemNode.UpdateEdges();
-
-
-
-
-        //temporary
-        topologicalOrdering = SortTopologically();
-        AssignTopologicalSortingOrder();
     }
+
+    void UpdateGraphForItemMoved(Item item, Vector2Int oldPosition, Vector2Int newPosition)
+    {
+        SortingGraphNode itemNode = item.gameObject.GetComponent<SortingGraphNode>();
+        Bounds newBounds = itemNode.GetSpRendererBounds();
+
+
+        Bounds oldBounds = newBounds;
+        oldBounds.center += gridConverter.GridCoordsToWorldCoords(oldPosition) - gridConverter.GridCoordsToWorldCoords(newPosition);
+
+        UpdateOrderingWithinBounds(oldBounds);
+        UpdateOrderingWithinBounds(newBounds);
+
+        UpdateOrdering();
+        Debug.Log("this should be called after all the comparisons");
+    }
+
 
 
     private void AssignTopologicalSortingOrder()
@@ -74,26 +103,36 @@ public class SortingGraph : MonoBehaviour
     {
         Stack<SortingGraphNode> stack = new Stack<SortingGraphNode>();
         HashSet<SortingGraphNode> visited = new HashSet<SortingGraphNode>();
+        HashSet<SortingGraphNode> inProgress = new HashSet<SortingGraphNode>();
 
         for (int i = 0; i < nodes.Count; i++)
         {
-            VisitNode(nodes[i], visited, stack);
+            VisitNode(nodes[i], visited, inProgress, stack);
         }
-        return stack.ToList();
+
+        return stack.Reverse().ToList();
     }
 
-    private void VisitNode(SortingGraphNode node, HashSet<SortingGraphNode> visited, Stack<SortingGraphNode> stack)
+    private void VisitNode(SortingGraphNode node, HashSet<SortingGraphNode> visited, HashSet<SortingGraphNode> inProgress, Stack<SortingGraphNode> stack)
     {
         if (visited.Contains(node))
         {
             return;
         }
 
+        if (inProgress.Contains(node))
+        {
+            Debug.LogWarning("Cycle detected in sorting graph at node: " + node.gameObject.name);
+            return;
+        }
+
+        inProgress.Add(node);
+
         visited.Add(node);
 
         foreach (SortingGraphNode edge in node.edges)
         {
-            VisitNode(edge, visited, stack);
+            VisitNode(edge, visited, inProgress, stack);
         }
 
         stack.Push(node);

@@ -18,7 +18,7 @@ public class PlacementManager : MonoBehaviour
     Item pickedUpItem = null;
     IPlacementState currentState;
 
-    public Action<Item> OnItemMoved;
+    public Action<Item, Vector2Int, Vector2Int> OnItemMoved;
 
     Vector2Int lastCoordinates = new Vector2Int(0, 0);
 
@@ -66,18 +66,11 @@ public class PlacementManager : MonoBehaviour
             return;
         }
 
+        Vector2Int oldCoords = pickedUpItem.GridCoordinates;
         pickedUpItem.MoveTo(coords, gridConverter);
         lastCoordinates = coords;
 
-        if (OnItemMoved != null)
-        {
-            OnItemMoved(pickedUpItem);
-        }
-        else
-        {
-            Debug.Log("why tf is it null?");
-
-        }
+        OnItemMoved?.Invoke(pickedUpItem, oldCoords, coords);
 
     }
 
