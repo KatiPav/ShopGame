@@ -5,6 +5,8 @@ using System;
 
 public class Item : MonoBehaviour
 {
+    private ItemRuntimeSet itemRuntimeSet;
+
     [SerializeField]
     public ItemType ItemType;
 
@@ -13,15 +15,10 @@ public class Item : MonoBehaviour
     public int PrefabId { get; set; }
 
     public FloorShape FloorShape { get; set; }
-    private Grid GameGrid {get;set;}
+    private Grid GameGrid { get; set; }
 
-    Collider2D Collider2D {get;set;}
+    Collider2D Collider2D { get; set; }
 
-
-    //these measurements are all in grid squares count
-    private float height;
-    private float width;
-    private float depth;
 
     void Awake()
     {
@@ -32,39 +29,45 @@ public class Item : MonoBehaviour
         {
             Debug.Log("Item could not find the grid.");
         }
+
     }
 
-    public void Initialize(int prefabId, Vector2Int coordinates)
+    public void Initialize(int prefabId, Vector2Int coordinates, ItemRuntimeSet itemRuntimeSet)
     {
+        this.itemRuntimeSet = itemRuntimeSet;
         PrefabId = prefabId;
         GridCoordinates = coordinates;
 
-        //CalculateMeasurments();
+        itemRuntimeSet.Add(this);
+
     }
+
+    private void OnDisable() => itemRuntimeSet?.Remove(this);
 
     public void MoveTo(Vector2Int coords, GridConverter gridConverter)
     {
+        Vector3 worldPos = gridConverter.GridCoordsToWorldCoords(coords);
+
         gameObject.transform.position = gridConverter.GridCoordsToWorldCoords(coords);
         GridCoordinates = coords;
     }
 
-    // private void CalculateMeasurments(){
-    //     Vector2Int back;
-    //     Vector2Int front;
-    //     Vector2Int left;
-    //     Vector2Int right;
+    public Vector2Int GetMinXSquare()
+    {
+        return FloorShape.GetMinXWithOrigin(GridCoordinates);
+    }
 
-    //     Collider2D.max.y;
-    //     //take highest point 
-    //     //check in which grid sqr it is 
-    //     //check difference betwee n floor back and it
+    public Vector2Int GetMinYSquare()
+    {
+        return FloorShape.GetMinYWithOrigin(GridCoordinates);
+    }
+    public Vector2Int GetMaxXSquare()
+    {
+        return FloorShape.GetMaxXWithOrigin(GridCoordinates);
+    }
+    public Vector2Int GetMaxYSquare()
+    {
+        return FloorShape.GetMaxYWithOrigin(GridCoordinates);
+    }
 
-    //     foreach (Vector2Int v in FloorShape.GetFloorCells())
-    //     {
-    //         Debug.Log("Floor cell is " + v);
-
-    //     }
-
-        
-    // }
 }

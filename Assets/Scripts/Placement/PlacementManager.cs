@@ -2,6 +2,23 @@ using System.Net;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using System;
+using System.Collections.Generic;
+using Unity.VisualScripting;
+
+public class MoveRequest
+{
+    public Item item;
+    public Vector2Int olgGridCoordinates;
+    public Vector2Int newGridCoordinates;
+
+    public MoveRequest(Item item, Vector2Int oldCoords, Vector2Int newCoords)
+    {
+        this.item = item;
+        olgGridCoordinates = oldCoords;
+        newGridCoordinates = newCoords;
+    }
+}
+
 
 public class PlacementManager : MonoBehaviour
 {
@@ -15,10 +32,12 @@ public class PlacementManager : MonoBehaviour
     [SerializeField]
     TilemapManager tilemapManager;
 
-    Item pickedUpItem = null; 
+    private List<MoveRequest> moveRequests = new List<MoveRequest>();
+    private List<MoveRequest> appliedThisStep = new List<MoveRequest>();
+    Item pickedUpItem = null;
     IPlacementState currentState;
 
-    public Action<Item> OnItemMoved;
+    public Action<Item, Vector2Int, Vector2Int> OnItemMoved;
 
     Vector2Int lastCoordinates = new Vector2Int(0, 0);
 
@@ -26,7 +45,7 @@ public class PlacementManager : MonoBehaviour
     {
         currentState = new IdleState();
 
-        if(tilemapManager == null)
+        if (tilemapManager == null)
         {
             Debug.Log("Tilemap manager is not set!");
             return;
@@ -56,7 +75,7 @@ public class PlacementManager : MonoBehaviour
             return;
         }
 
-        if (!gridRegistry.CanPlaceItemAt(coords, pickedUpItem)) //do we want to move it on the mouse even if not possible to place there?
+        if (!CanPlaceInOrAraound(coords, out coords))
         {
             return;
         }
@@ -66,19 +85,60 @@ public class PlacementManager : MonoBehaviour
             return;
         }
 
-        pickedUpItem.MoveTo(coords, gridConverter);
-        if(OnItemMoved != null) {
-           // OnItemMoved(pickedUpItem);
-        }
-        else
-        {
-            Debug.Log("why tf is it null?");
-
-        }
+        Vector2Int oldCoords = pickedUpItem.GridCoordinates;
+        moveRequests.Add(new MoveRequest(pickedUpItem, oldCoords, coords));
         lastCoordinates = coords;
-
     }
 
+    void FixedUpdate()
+    {
+        foreach (var req in moveRequests)
+        {
+            req.item.MoveTo(req.newGridCoordinates, gridConverter);
+        }
+        appliedThisStep.AddRange(moveRequests);
+        moveRequests.Clear();
+    }
+
+    void LateUpdate()
+    {
+        foreach (var req in appliedThisStep)
+        {
+            OnItemMoved?.Invoke(req.item, req.olgGridCoordinates, req.newGridCoordinates);
+        }
+        appliedThisStep.Clear();
+    }
+
+    private bool CanPlaceInOrAraound(Vector2Int coords, out Vector2Int outCoords)
+    {
+        Vector2Int[] offsets =
+{
+            new Vector2Int(0,0),
+            new Vector2Int(-1, -1),
+            new Vector2Int(0, -1),
+            new Vector2Int(1, -1),
+            new Vector2Int(-1, 0),
+            new Vector2Int(1, 0),
+            new Vector2Int(-1, 1),
+            new Vector2Int(0, 1),
+            new Vector2Int(1, 1)
+        };
+
+        bool canPlace = false;
+        outCoords = coords;
+        foreach (Vector2Int offset in offsets)
+        {
+            Vector2Int newCoords = coords + offset;
+
+            if (gridRegistry.CanPlaceItemAt(newCoords, pickedUpItem))
+            {
+                canPlace = true;
+                outCoords = newCoords;
+                break;
+            }
+        }
+        return canPlace;
+    }
     public void PlacePickedUpItem()
     {
         pickedUpItem.gameObject.SetActive(true);

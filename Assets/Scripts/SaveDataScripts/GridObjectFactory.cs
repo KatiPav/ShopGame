@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 public class GridObjectFactory : MonoBehaviour
 {
@@ -8,18 +9,25 @@ public class GridObjectFactory : MonoBehaviour
     [SerializeField]
     GridConverter gridCoordinates;
 
+    [SerializeField]
+    private ItemRuntimeSet itemRuntimeSet;
+
+    public Action<Item> onItemCreated;
+
     public Item CreateGridItem(PlacedObjectDto obj)
     {
         GameObject prefab = objectDatabase.GetPrefabById(obj.PrefabId);
-        prefab.SetActive(true);
         Vector3 position = gridCoordinates.GridCoordsToWorldCoords(new Vector2Int(obj.x, obj.y));
 
         GameObject newObj = GameObject.Instantiate(prefab, position, Quaternion.identity);
-        Item item = ConfigureItemComponent(newObj, obj);
+        Item item = AttachItemComponent(newObj);
+        newObj.SetActive(true);
+        InitializeItem(item, obj.PrefabId, new Vector2Int(obj.x, obj.y));
+        onItemCreated?.Invoke(item);
         return item;
     }
 
-    private Item ConfigureItemComponent(GameObject itemObj, PlacedObjectDto obj)
+    private Item AttachItemComponent(GameObject itemObj)
     {
         Item item = itemObj.GetComponent<Item>();
 
@@ -28,7 +36,11 @@ public class GridObjectFactory : MonoBehaviour
             item = itemObj.AddComponent<Item>();
         }
 
-        item.Initialize(obj.PrefabId, new Vector2Int(obj.x, obj.y));
         return item;
+    }
+
+    private void InitializeItem(Item item, int prefabId, Vector2Int coords)
+    {
+        item.Initialize(prefabId, coords, itemRuntimeSet);
     }
 }

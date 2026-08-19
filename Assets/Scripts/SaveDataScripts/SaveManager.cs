@@ -24,14 +24,15 @@ public class SaveManager : MonoBehaviour
         }
 
         saveData = new SaveData();
-        LoadSavedObjectsIntoRegistry();
+        LoadSavedObjectsIntoGridRegistry();
     }
 
-    private void LoadSavedObjectsIntoRegistry()
+    private void LoadSavedObjectsIntoGridRegistry()
     {
         foreach (PlacedObjectDto obj in saveData.saveObjects.placedObjects)
         {
             Item item = factory.CreateGridItem(obj);
+
             gridRegistry.AddItem(item);
         }
     }
