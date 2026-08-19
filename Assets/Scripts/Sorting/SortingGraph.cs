@@ -18,6 +18,9 @@ public class SortingGraph : MonoBehaviour
     [SerializeField]
     GridConverter gridConverter;
 
+    [SerializeField]
+    ItemRuntimeSet itemRuntimeSet;
+
     List<SortingGraphNode> nodes = new List<SortingGraphNode>();
 
     List<SortingGraphNode> topologicalOrdering = new List<SortingGraphNode>();
@@ -26,6 +29,19 @@ public class SortingGraph : MonoBehaviour
     {
         factory.onItemCreated += CreateSortingNode;
         placementManager.OnItemMoved += UpdateGraphForItemMoved;
+    }
+
+    void Start()
+    {
+        // By Start(), every object's Awake() has already run — including
+        // whatever populated the runtime set. Safe to snapshot now.
+        foreach (Item existingItem in itemRuntimeSet.Items)
+        {
+            if (existingItem.gameObject.GetComponent<SortingGraphNode>() == null)
+            {
+                CreateSortingNode(existingItem);
+            }
+        }
     }
 
     void OnDestroy()
@@ -46,7 +62,6 @@ public class SortingGraph : MonoBehaviour
 
     void UpdateOrderingWithinBounds(Bounds bounds)
     {
-        Physics2D.SyncTransforms();
 
         List<SortingGraphNode> overlaps = Physics2D.OverlapAreaAll(bounds.min, bounds.max)
         .Select(collider => collider.gameObject.GetComponent<SortingGraphNode>())

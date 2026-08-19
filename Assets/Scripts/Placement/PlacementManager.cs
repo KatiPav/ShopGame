@@ -2,6 +2,23 @@ using System.Net;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using System;
+using System.Collections.Generic;
+using Unity.VisualScripting;
+
+public class MoveRequest
+{
+    public Item item;
+    public Vector2Int olgGridCoordinates;
+    public Vector2Int newGridCoordinates;
+
+    public MoveRequest(Item item, Vector2Int oldCoords, Vector2Int newCoords)
+    {
+        this.item = item;
+        olgGridCoordinates = oldCoords;
+        newGridCoordinates = newCoords;
+    }
+}
+
 
 public class PlacementManager : MonoBehaviour
 {
@@ -15,6 +32,8 @@ public class PlacementManager : MonoBehaviour
     [SerializeField]
     TilemapManager tilemapManager;
 
+    private List<MoveRequest> moveRequests = new List<MoveRequest>();
+    private List<MoveRequest> appliedThisStep = new List<MoveRequest>();
     Item pickedUpItem = null;
     IPlacementState currentState;
 
@@ -67,11 +86,27 @@ public class PlacementManager : MonoBehaviour
         }
 
         Vector2Int oldCoords = pickedUpItem.GridCoordinates;
-        pickedUpItem.MoveTo(coords, gridConverter);
+        moveRequests.Add(new MoveRequest(pickedUpItem, oldCoords, coords));
         lastCoordinates = coords;
+    }
 
-        OnItemMoved?.Invoke(pickedUpItem, oldCoords, coords);
+    void FixedUpdate()
+    {
+        foreach (var req in moveRequests)
+        {
+            req.item.MoveTo(req.newGridCoordinates, gridConverter);
+        }
+        appliedThisStep.AddRange(moveRequests);
+        moveRequests.Clear();
+    }
 
+    void LateUpdate()
+    {
+        foreach (var req in appliedThisStep)
+        {
+            OnItemMoved?.Invoke(req.item, req.olgGridCoordinates, req.newGridCoordinates);
+        }
+        appliedThisStep.Clear();
     }
 
     private bool CanPlaceInOrAraound(Vector2Int coords, out Vector2Int outCoords)

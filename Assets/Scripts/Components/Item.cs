@@ -5,6 +5,8 @@ using System;
 
 public class Item : MonoBehaviour
 {
+    private ItemRuntimeSet itemRuntimeSet;
+
     [SerializeField]
     public ItemType ItemType;
 
@@ -17,41 +19,34 @@ public class Item : MonoBehaviour
 
     Collider2D Collider2D { get; set; }
 
-    Rigidbody2D RB { get; set; }
-
 
     void Awake()
     {
         Id = Guid.NewGuid();
         FloorShape = GetComponent<FloorShape>();
-        RB = GetComponent<Rigidbody2D>();
         GameGrid = FindAnyObjectByType<Grid>();
         if (GameGrid == null)
         {
             Debug.Log("Item could not find the grid.");
         }
 
-        if (RB == null)
-        {
-            Debug.Log("Item could not find its RigidBody2D.");
-        }
     }
 
-    public void Initialize(int prefabId, Vector2Int coordinates)
+    public void Initialize(int prefabId, Vector2Int coordinates, ItemRuntimeSet itemRuntimeSet)
     {
+        this.itemRuntimeSet = itemRuntimeSet;
         PrefabId = prefabId;
         GridCoordinates = coordinates;
 
-        //CalculateMeasurments();
+        itemRuntimeSet.Add(this);
+
     }
+
+    private void OnDisable() => itemRuntimeSet?.Remove(this);
 
     public void MoveTo(Vector2Int coords, GridConverter gridConverter)
     {
         Vector3 worldPos = gridConverter.GridCoordsToWorldCoords(coords);
-        //RB.MovePosition(new Vector2(worldPos.x, worldPos.y)); 
-        // TODO: fix this as soon as possible, 
-        // treat it as a physics object and remove the SyncTransforms in Sorting!!!
-
 
         gameObject.transform.position = gridConverter.GridCoordsToWorldCoords(coords);
         GridCoordinates = coords;
@@ -74,23 +69,5 @@ public class Item : MonoBehaviour
     {
         return FloorShape.GetMaxYWithOrigin(GridCoordinates);
     }
-    // private void CalculateMeasurments(){
-    //     Vector2Int back;
-    //     Vector2Int front;
-    //     Vector2Int left;
-    //     Vector2Int right;
 
-    //     Collider2D.max.y;
-    //     //take highest point 
-    //     //check in which grid sqr it is 
-    //     //check difference betwee n floor back and it
-
-    //     foreach (Vector2Int v in FloorShape.GetFloorCells())
-    //     {
-    //         Debug.Log("Floor cell is " + v);
-
-    //     }
-
-
-    // }
 }

@@ -9,23 +9,25 @@ public class GridObjectFactory : MonoBehaviour
     [SerializeField]
     GridConverter gridCoordinates;
 
+    [SerializeField]
+    private ItemRuntimeSet itemRuntimeSet;
+
     public Action<Item> onItemCreated;
 
     public Item CreateGridItem(PlacedObjectDto obj)
     {
         GameObject prefab = objectDatabase.GetPrefabById(obj.PrefabId);
-        prefab.SetActive(true);
         Vector3 position = gridCoordinates.GridCoordsToWorldCoords(new Vector2Int(obj.x, obj.y));
 
         GameObject newObj = GameObject.Instantiate(prefab, position, Quaternion.identity);
-        //AttachRigidBody2D(newObj);
-        Item item = AttachItemComponent(newObj, obj);
-
+        Item item = AttachItemComponent(newObj);
+        newObj.SetActive(true);
+        InitializeItem(item, obj.PrefabId, new Vector2Int(obj.x, obj.y));
         onItemCreated?.Invoke(item);
         return item;
     }
 
-    private Item AttachItemComponent(GameObject itemObj, PlacedObjectDto obj)
+    private Item AttachItemComponent(GameObject itemObj)
     {
         Item item = itemObj.GetComponent<Item>();
 
@@ -34,22 +36,11 @@ public class GridObjectFactory : MonoBehaviour
             item = itemObj.AddComponent<Item>();
         }
 
-        item.Initialize(obj.PrefabId, new Vector2Int(obj.x, obj.y));
         return item;
     }
 
-    private Rigidbody2D AttachRigidBody2D(GameObject gObj)
+    private void InitializeItem(Item item, int prefabId, Vector2Int coords)
     {
-        Rigidbody2D rb = gObj.GetComponent<Rigidbody2D>();
-
-        if (rb == null)
-        {
-            rb = gObj.AddComponent<Rigidbody2D>();
-        }
-
-        Debug.Log("huh?");
-        rb.bodyType = RigidbodyType2D.Kinematic;
-
-        return rb;
+        item.Initialize(prefabId, coords, itemRuntimeSet);
     }
 }

@@ -11136,6 +11136,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SortingGraph
   placementManager: {fileID: 1824566732}
   factory: {fileID: 526090194}
+  gridConverter: {fileID: 1509539911}
 --- !u!114 &1824566732
 MonoBehaviour:
   m_ObjectHideFlags: 0
