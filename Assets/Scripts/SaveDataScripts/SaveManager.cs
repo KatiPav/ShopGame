@@ -24,7 +24,6 @@ public class SaveManager : MonoBehaviour
         }
 
         saveData = new SaveData();
-        Debug.Log("1");
         LoadSavedObjectsIntoGridRegistry();
     }
 

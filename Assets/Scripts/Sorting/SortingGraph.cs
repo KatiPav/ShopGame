@@ -33,8 +33,6 @@ public class SortingGraph : MonoBehaviour
 
     void Start()
     {
-        // By Start(), every object's Awake() has already run — including
-        // whatever populated the runtime set. Safe to snapshot now.
         foreach (Item existingItem in itemRuntimeSet.Items)
         {
             if (existingItem.gameObject.GetComponent<SortingGraphNode>() == null)
@@ -76,7 +74,6 @@ public class SortingGraph : MonoBehaviour
             .Select(collider => collider.gameObject.GetComponent<SortingGraphNode>())
             .Where(n => n != null)
             .ToList();
-            Debug.Log("updating" + item.name + " has " + otherItemOverlaps.Count + " overlaps under it.");
             item.UpdateEdgesWithOverlaps(otherItemOverlaps);
         }
     }
@@ -94,7 +91,6 @@ public class SortingGraph : MonoBehaviour
         UpdateOrderingWithinBounds(newBounds);
 
         UpdateOrdering();
-        Debug.Log("this should be called after all the comparisons");
     }
 
 

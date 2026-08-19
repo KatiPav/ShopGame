@@ -13,13 +13,8 @@ public class ItemRuntimeSet : ScriptableObject
     }
     public void Add(Item itemToAdd)
     {
-        //Debug.Log(itemToAdd.GetType());
         if (!items.Contains(itemToAdd))
             items.Add(itemToAdd);
-        else
-        {
-            Debug.Log("it seems we are doing this twice");
-        }
     }
 
     public void Remove(Item itemToRemove)
