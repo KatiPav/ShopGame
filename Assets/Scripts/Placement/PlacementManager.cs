@@ -1,23 +1,7 @@
-using System.Net;
+
 using UnityEngine;
-using UnityEngine.Tilemaps;
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
-
-public class MoveRequest
-{
-    public Item item;
-    public Vector2Int olgGridCoordinates;
-    public Vector2Int newGridCoordinates;
-
-    public MoveRequest(Item item, Vector2Int oldCoords, Vector2Int newCoords)
-    {
-        this.item = item;
-        olgGridCoordinates = oldCoords;
-        newGridCoordinates = newCoords;
-    }
-}
 
 
 public class PlacementManager : MonoBehaviour
@@ -27,135 +11,120 @@ public class PlacementManager : MonoBehaviour
     GridRegistry gridRegistry;
 
     [SerializeField]
-    GridConverter gridConverter;
-
-    [SerializeField]
     TilemapManager tilemapManager;
 
-    private List<MoveRequest> moveRequests = new List<MoveRequest>();
-    private List<MoveRequest> appliedThisStep = new List<MoveRequest>();
+    [SerializeField]
+    MovementManager movementManager;
+
+    [SerializeField]
+    GridConverter gridConverter;
+
     Item pickedUpItem = null;
-    IPlacementState currentState;
+    bool IsHolding => pickedUpItem != null;
 
-    public Action<Item, Vector2Int, Vector2Int> OnItemMoved;
-
+    Vector2Int originalCoordintes = default;
     Vector2Int lastCoordinates = new Vector2Int(0, 0);
+    bool hasLastCoordinates;
 
     void Awake()
     {
-        currentState = new IdleState();
 
+        if (gridRegistry == null)
+        {
+            Debug.Log("Grid registry is not set!");
+            return;
+        }
         if (tilemapManager == null)
         {
             Debug.Log("Tilemap manager is not set!");
+            return;
+        }
+        if (movementManager == null)
+        {
+            Debug.Log("Movement manager is not set!");
+            return;
+        }
+        if (gridConverter == null)
+        {
+            Debug.Log("Grid Converter is not set!");
             return;
         }
     }
 
     void Update()
     {
-        currentState.OnUpdate(this);
+        if (IsHolding)
+            UpdatePositionOfPickedUpObject();
     }
     public void Click()
     {
-        currentState.OnClick(this);
+        if (IsHolding)
+            PlaceHeldItem();
+        else
+            PickUpItem();
     }
 
     public void UpdatePositionOfPickedUpObject()
     {
-        Vector2Int coords = GetCellCoordinatesOfMousePosition();
+        Vector2Int coords = gridConverter.GetGridCoordinatesOfMousePosition();
 
         if (pickedUpItem == null)
         {
             return;
         }
-
         if (coords == lastCoordinates)
         {
             return;
         }
-
-        if (!CanPlaceInOrAraound(coords, out coords))
+        if (!gridRegistry.CanPlaceItemInOrAraoundCoords(pickedUpItem, coords, out coords)
+        || !tilemapManager.CanPlaceItemOnTilemap(pickedUpItem, coords))
         {
+            MakeItemPreview();
             return;
         }
 
-        if (!tilemapManager.CanPlaceItemOnTilemap(pickedUpItem, coords))
-        {
-            return;
-        }
-
+        pickedUpItem.SetPreview(false);
         Vector2Int oldCoords = pickedUpItem.GridCoordinates;
-        moveRequests.Add(new MoveRequest(pickedUpItem, oldCoords, coords));
+        movementManager.RequestMove(pickedUpItem, oldCoords, coords);
         lastCoordinates = coords;
     }
 
-    void FixedUpdate()
+    private void MakeItemPreview() //this whole flow is mazalo needs to be fixed and cleaned
     {
-        foreach (var req in moveRequests)
-        {
-            req.item.MoveTo(req.newGridCoordinates, gridConverter);
-        }
-        appliedThisStep.AddRange(moveRequests);
-        moveRequests.Clear();
+        Vector3 mouseScreenPos = Input.mousePosition;
+
+        Vector3 worldPos = Camera.main.ScreenToWorldPoint(mouseScreenPos);
+        worldPos.z = 10;
+        pickedUpItem.gameObject.transform.position = worldPos;
+        pickedUpItem.SetPreview(true);
     }
 
-    void LateUpdate()
+
+
+    public void PlaceHeldItem()
     {
-        foreach (var req in appliedThisStep)
+        if (pickedUpItem == null)
         {
-            OnItemMoved?.Invoke(req.item, req.olgGridCoordinates, req.newGridCoordinates);
+            return;
         }
-        appliedThisStep.Clear();
-    }
 
-    private bool CanPlaceInOrAraound(Vector2Int coords, out Vector2Int outCoords)
-    {
-        Vector2Int[] offsets =
-{
-            new Vector2Int(0,0),
-            new Vector2Int(-1, -1),
-            new Vector2Int(0, -1),
-            new Vector2Int(1, -1),
-            new Vector2Int(-1, 0),
-            new Vector2Int(1, 0),
-            new Vector2Int(-1, 1),
-            new Vector2Int(0, 1),
-            new Vector2Int(1, 1)
-        };
-
-        bool canPlace = false;
-        outCoords = coords;
-        foreach (Vector2Int offset in offsets)
-        {
-            Vector2Int newCoords = coords + offset;
-
-            if (gridRegistry.CanPlaceItemAt(newCoords, pickedUpItem))
-            {
-                canPlace = true;
-                outCoords = newCoords;
-                break;
-            }
-        }
-        return canPlace;
-    }
-    public void PlacePickedUpItem()
-    {
         pickedUpItem.gameObject.SetActive(true);
-        pickedUpItem.MoveTo(lastCoordinates, gridConverter);
-
+        movementManager.RequestMove(pickedUpItem, pickedUpItem.GridCoordinates, lastCoordinates);
         gridRegistry.AddItem(pickedUpItem);
-        currentState = new IdleState();
+
+        pickedUpItem = null;
+        hasLastCoordinates = false;
+        originalCoordintes = default;
+
     }
 
-    private bool TryGetItemUnderMouse(out Item item)
+    private bool TryPickUpItemUnderMouse(out Item item)
     {
         Vector3 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         RaycastHit2D hit = Physics2D.Raycast(new Vector2(worldPos.x, worldPos.y), Vector2.zero);//add layer mask later
 
         if (!hit)
         {
-            Debug.Log("No colliders under mouse");
             item = null;
             return false;
         }
@@ -175,20 +144,41 @@ public class PlacementManager : MonoBehaviour
     {
         Item item;
 
-        if (!TryGetItemUnderMouse(out item))
+        if (!TryPickUpItemUnderMouse(out item))
         {
             return;
         }
-
+        originalCoordintes = item.GridCoordinates;
         pickedUpItem = gridRegistry.PullItem(item);
-        currentState = new HoldingState();
     }
 
-
-    private Vector2Int GetCellCoordinatesOfMousePosition()
+    public void SetPickedItem(Item item)
     {
-        Vector3 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        return gridConverter.WorldCoordsToGridCoords(worldPos);
+        if (IsHolding && originalCoordintes != default)
+        {
+            ReturnToLastCoordinates(pickedUpItem);
+        }
+        else if (IsHolding && originalCoordintes == default)
+        {
+            ReturnToInventory(pickedUpItem);
+        }
+
+        pickedUpItem = item;
+        Debug.Log("item was created and is currently held?");
     }
+
+    private void ReturnToInventory(Item item)
+    {
+        //Catalog.Instance.Add(item);
+    }
+
+    private void ReturnToLastCoordinates(Item item)
+    {
+        movementManager.RequestMove(item, item.GridCoordinates, originalCoordintes);
+        gridRegistry.AddItem(item);
+    }
+
+
+
 }
 

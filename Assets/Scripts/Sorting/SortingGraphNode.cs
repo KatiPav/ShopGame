@@ -89,8 +89,6 @@ public class SortingGraphNode : MonoBehaviour
         }
         else if (otherMinX >= maxX)
         {
-            Debug.Log(item.name + "should be on top of " + otherItem.name);
-
             return true;
         }
 
@@ -103,7 +101,6 @@ public class SortingGraphNode : MonoBehaviour
         }
         else if (otherMinY >= maxY)
         {
-            Debug.Log(item.name + "should be on top of " + otherItem.name);
             return true;
         }
 

@@ -45,12 +45,42 @@ public class GridRegistry : MonoBehaviour
     public bool CanPlaceItemAt(Vector2Int coords, Item item)
     {
 
-        foreach(Vector2Int cell in item.FloorShape.GetFloorCellsWithOrigin(coords))
+        foreach (Vector2Int cell in item.FloorShape.GetFloorCellsWithOrigin(coords))
         {
-            if(furnitureGridData.HasPlacedItem(cell)) return false;
-            if(decorationsGridData.HasPlacedItem(cell)) return false;
+            if (furnitureGridData.HasPlacedItem(cell)) return false;
+            if (decorationsGridData.HasPlacedItem(cell)) return false;
         }
         return true;
+    }
+    public bool CanPlaceItemInOrAraoundCoords(Item item, Vector2Int coords, out Vector2Int outCoords)
+    {
+        Vector2Int[] offsets =
+{
+            new Vector2Int(0,0),
+            new Vector2Int(-1, -1),
+            new Vector2Int(0, -1),
+            new Vector2Int(1, -1),
+            new Vector2Int(-1, 0),
+            new Vector2Int(1, 0),
+            new Vector2Int(-1, 1),
+            new Vector2Int(0, 1),
+            new Vector2Int(1, 1)
+        };
+
+        bool canPlace = false;
+        outCoords = coords;
+        foreach (Vector2Int offset in offsets)
+        {
+            Vector2Int newCoords = coords + offset;
+
+            if (CanPlaceItemAt(newCoords, item))
+            {
+                canPlace = true;
+                outCoords = newCoords;
+                break;
+            }
+        }
+        return canPlace;
     }
 
     public List<GameObject> GetFurniture()

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 9228f8d8a9d4f9840b84fba2124b7401
+guid: 5265836785112ca4384afa2648eeba90
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -69841365825876407
-    second: inventory_slot_0
+      213: 8561524053159027169
+    second: yellow button_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: inventory_slot_0
+      name: yellow button_0
       rect:
         serializedVersion: 2
-        x: 8
-        y: 181
-        width: 32
-        height: 32
+        x: 128
+        y: 208
+        width: 16
+        height: 16
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 94e0257d5afd70ff0800000000000000
-      internalID: -69841365825876407
+      spriteID: 1e1a184f3c4a0d670800000000000000
+      internalID: 8561524053159027169
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 8dd2c1cc2176bcd4daecf2cc36643720
+    spriteID: 4c1d5ec16a089144a9d34e8125818591
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      inventory_slot_0: -69841365825876407
+      yellow button_0: 8561524053159027169
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -15,5 +15,10 @@ public class GridConverter : MonoBehaviour
         return new Vector2Int(coordinates.x, coordinates.y);
     }
 
+    public Vector2Int GetGridCoordinatesOfMousePosition()
+    {
+        Vector3 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        return WorldCoordsToGridCoords(worldPos);
+    }
 
 }
