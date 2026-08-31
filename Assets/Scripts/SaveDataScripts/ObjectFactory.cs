@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 
-public class GridObjectFactory : MonoBehaviour
+public class GameItemFactory : MonoBehaviour
 {
     [SerializeField]
     ObjectDatabase objectDatabase;
@@ -24,6 +24,27 @@ public class GridObjectFactory : MonoBehaviour
         newObj.SetActive(true);
         InitializeItem(item, obj.PrefabId, new Vector2Int(obj.x, obj.y));
         onItemCreated?.Invoke(item);
+        return item;
+    }
+
+    public InventoryObject CreateInventoryObject(InventoryObjectDto obj)
+    {
+        GameObject prefab = objectDatabase.GetPrefabById(obj.PrefabId);
+        return new InventoryObject(obj.Id, obj.PrefabId, prefab.GetComponent<SpriteRenderer>().sprite, obj.amount, obj.Categories);
+    }
+
+    public Item CreateGridItem(InventoryObject obj)
+    {
+        GameObject prefab = objectDatabase.GetPrefabById(obj.PrefabId);
+        Vector3 position = Input.mousePosition;
+
+        GameObject newObj = GameObject.Instantiate(prefab, position, Quaternion.identity);
+        Item item = AttachItemComponent(newObj);
+
+        newObj.SetActive(true);
+        //InitializeItem(item, obj.PrefabId, new Vector2Int(obj.x, obj.y));
+        onItemCreated?.Invoke(item);
+        //Debug.Log("create grid item called");
         return item;
     }
 
