@@ -23,6 +23,9 @@ public class MovementManager : MonoBehaviour
     {
         foreach (var req in moveRequests)
         {
+            if (req.item == null)
+                continue;
+
             req.item.MoveTo(req.newGridCoordinates, gridConverter);
         }
         appliedThisStep.AddRange(moveRequests);

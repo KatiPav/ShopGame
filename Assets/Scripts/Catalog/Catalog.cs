@@ -8,8 +8,6 @@ public class Catalog
 {
     public static Catalog Instance { get; } = new Catalog();
 
-    public Action<InventoryObject> onInventoryObjectAdded;
-
     //the key is the Prefab ID
     Dictionary<int, InventoryObject> allObjects = new Dictionary<int, InventoryObject>();
 
@@ -73,7 +71,6 @@ public class Catalog
         {
             result.Add(allObjects[prefabId]);
         }
-        Debug.Log("We found " + result.Count + "objects of category " + category.ToString());
         return result;
     }
 

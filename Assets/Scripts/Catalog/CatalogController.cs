@@ -2,6 +2,7 @@
 
 using System;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class CatalogController : MonoBehaviour
 {
@@ -10,6 +11,13 @@ public class CatalogController : MonoBehaviour
 
     public Action onItemAddedToCatalog;
     public Action onItemRemovedFromCatalog;
+
+    public void AddNewInventoryObjectToCatalog(InventoryObject iObj)
+    {
+        Catalog.Instance.Add(iObj);
+        onItemAddedToCatalog.Invoke();
+    }
+
     public void AddItemToCatalog(Item item)
     {
         InventoryObject iObj = Catalog.Instance.GetInventoryObject(item.PrefabId);
@@ -48,6 +56,11 @@ public class CatalogController : MonoBehaviour
         onItemRemovedFromCatalog?.Invoke();
         return factory.CreateGridItem(iObj);
 
+    }
+
+    public List<InventoryObject> GetAllInventoryObjects()
+    {
+        return Catalog.Instance.GetAllObjects();
     }
 
 

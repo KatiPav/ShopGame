@@ -31,7 +31,7 @@ public class GameItemFactory : MonoBehaviour
     public InventoryObject CreateInventoryObject(InventoryObjectDto obj)
     {
         GameObject prefab = objectDatabase.GetPrefabById(obj.PrefabId);
-        return new InventoryObject(obj.Id, obj.PrefabId, prefab.GetComponent<SpriteRenderer>().sprite, obj.amount, obj.Categories);
+        return new InventoryObject(obj.Id, obj.PrefabId, prefab.GetComponent<SpriteRenderer>().sprite, obj.Amount, obj.Categories);
     }
 
     public InventoryObject CreateInventoryObject(int prefabId, List<Category> categories)

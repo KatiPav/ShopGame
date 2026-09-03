@@ -1,1 +1,1 @@
-{"placedObjects":[{"x":-6,"y":-1,"PrefabId":4},{"x":-7,"y":-7,"PrefabId":4},{"x":-11,"y":-5,"PrefabId":0},{"x":0,"y":-1,"PrefabId":0},{"x":0,"y":-14,"PrefabId":0},{"x":-1,"y":-11,"PrefabId":0},{"x":1,"y":-5,"PrefabId":2},{"x":1,"y":-9,"PrefabId":0},{"x":1,"y":-11,"PrefabId":0}],"inventoryObjects":[]}
+{"placedObjects":[{"x":1,"y":-5,"PrefabId":2}],"inventoryObjects":[{"Id":"2bc95320-e37d-4d3a-bc67-17b45177cfa0","PrefabId":0,"Categories":[1],"Amount":2},{"Id":"3af5a500-74ad-42bd-88f5-044a23ba057d","PrefabId":4,"Categories":[0],"Amount":1}]}

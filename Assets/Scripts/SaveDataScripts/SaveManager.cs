@@ -17,11 +17,26 @@ public class SaveManager : MonoBehaviour
     [SerializeField]
     GameItemFactory factory;
 
+    [SerializeField]
+    CatalogController catalogController;
+
     public void Awake()
     {
         if (objectDatabase == null)
         {
             Debug.Log("ObjectDatabase is not assigned. Did you forget to reference it in SaveManager?");
+        }
+        if (gridRegistry == null)
+        {
+            Debug.Log("GridRegistry is not assigned. Did you forget to reference it in SaveManager?");
+        }
+        if (factory == null)
+        {
+            Debug.Log("GameItemFactory is not assigned. Did you forget to reference it in SaveManager?");
+        }
+        if (catalogController == null)
+        {
+            Debug.Log("CatalogController is not assigned. Did you forget to reference it in SaveManager?");
         }
 
         saveData = new SaveData();
@@ -42,8 +57,8 @@ public class SaveManager : MonoBehaviour
     {
         foreach (InventoryObjectDto obj in saveData.saveObjects.inventoryObjects)
         {
-            InventoryObject item = factory.CreateInventoryObject(obj);
-            Catalog.Instance.Add(item); //might be better to use catalog controller here?
+            InventoryObject iObj = factory.CreateInventoryObject(obj);
+            catalogController.AddNewInventoryObjectToCatalog(iObj);
         }
 
 
@@ -57,20 +72,15 @@ public class SaveManager : MonoBehaviour
 
         InventoryObject itemtest = factory.CreateInventoryObject(test1);
         InventoryObject itemtest2 = factory.CreateInventoryObject(test2);
-        Catalog.Instance.Add(itemtest); //is it better for catalog to ba an actual object?
-        Catalog.Instance.Add(itemtest2); //is it better for catalog to ba an actual object?
-        Debug.Log("added 2 test object to catalog");
+        //catalogController.AddNewInventoryObjectToCatalog(itemtest);
+        //catalogController.AddNewInventoryObjectToCatalog(itemtest2);
+        //Debug.Log("added 2 test object to catalog");
 
     }
 
     private InventoryObjectDto MakeTestInventoryObject(int prefabId, List<Category> cats, int amount)
     {
-        InventoryObjectDto test1 = new();
-        test1.Id = Guid.NewGuid();
-        test1.PrefabId = prefabId;
-        test1.Categories = cats;
-        test1.amount = amount;
-        return test1;
+        return new InventoryObjectDto(Guid.NewGuid(), prefabId, cats, amount);
     }
 
     PlacedObjectDto PlacedObjectToPlacedObjectDto(GameObject itemObj)
@@ -79,13 +89,21 @@ public class SaveManager : MonoBehaviour
         return new PlacedObjectDto(item.GridCoordinates, item.PrefabId, item.ItemType);
     }
 
+    InventoryObjectDto InventoryObjectToInventoryObjectDto(InventoryObject iObj)
+    {
+        return new InventoryObjectDto(iObj.Id, iObj.PrefabId, iObj.Categories, iObj.Amount);
+    }
+
     public void SaveGame()
     {
         List<GameObject> gridObjects = gridRegistry.GetAllObjects();
         List<PlacedObjectDto> placedObjectsDtos = gridObjects.Select((item) => { return PlacedObjectToPlacedObjectDto(item); }).ToList();
+        List<InventoryObject> inventoryObjects = catalogController.GetAllInventoryObjects();
+        List<InventoryObjectDto> inventoryObjectsDtos = inventoryObjects.Select((item) => InventoryObjectToInventoryObjectDto(item)).ToList();
 
         saveData.Clear();
         saveData.AddObjects(placedObjectsDtos);
+        saveData.AddObjects(inventoryObjectsDtos);
         saveData.Save();
     }
 }

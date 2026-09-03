@@ -56,6 +56,8 @@ public class SideMenu : MonoBehaviour
 
     private void CreateInventorySlots()
     {
+        DestroySlots();
+
         foreach (var item in Catalog.Instance.GetObjectsOfCategory(defaultCategory))
         {
             CreateInventorySlot(item);
@@ -64,7 +66,6 @@ public class SideMenu : MonoBehaviour
 
     private void HandleItemAdded()
     {
-        Debug.Log("Helllooooo??? added to side");
         //TODO: fix this so no need to refresh the whole menu
         DestroySlots();
         CreateInventorySlots();
@@ -72,9 +73,7 @@ public class SideMenu : MonoBehaviour
     }
     private void HandleItemRemoved()
     {
-        Debug.Log("Helllooooo??? removed from side");
         //TODO: fix this so no need to refresh the whole menu
-        DestroySlots();
         CreateInventorySlots();
 
     }
@@ -83,8 +82,10 @@ public class SideMenu : MonoBehaviour
     {
         foreach (var s in slots)
         {
+            s.gameObject.SetActive(false);
             Destroy(s.gameObject);
         }
+
         slots.Clear();
     }
 
@@ -103,7 +104,6 @@ public class SideMenu : MonoBehaviour
 
     private void HandleSlotClicked(InventoryObject obj)
     {
-        Debug.Log("Slot clicked." + obj);
         Item spawned = catalogController.PullItemFromCatalog(obj);
 
         PlacementManager.SetPickedItem(spawned);

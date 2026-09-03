@@ -4,7 +4,7 @@ using System;
 
 public class InventoryObject
 {
-    public string Id { get; private set; }
+    public Guid Id { get; private set; }
 
     public int PrefabId { get; private set; }
 
@@ -16,7 +16,7 @@ public class InventoryObject
 
     public InventoryObject(Guid id, int prefabId, Sprite sprite, int amount, List<Category> categories)
     {
-        Id = id.ToString();
+        Id = id;
         PrefabId = prefabId;
         ObjectSprite = sprite;
         Amount = amount;

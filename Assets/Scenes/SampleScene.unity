@@ -10145,6 +10145,7 @@ MonoBehaviour:
   objectDatabase: {fileID: 11400000, guid: 02282723dffde0b43b1dfd34873e845a, type: 2}
   gridRegistry: {fileID: 1262472691}
   factory: {fileID: 526090196}
+  catalogController: {fileID: 1977551497}
 --- !u!114 &1824566728
 MonoBehaviour:
   m_ObjectHideFlags: 0
