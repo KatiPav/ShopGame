@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 public class GameItemFactory : MonoBehaviour
 {
@@ -33,7 +34,13 @@ public class GameItemFactory : MonoBehaviour
         return new InventoryObject(obj.Id, obj.PrefabId, prefab.GetComponent<SpriteRenderer>().sprite, obj.amount, obj.Categories);
     }
 
-    public Item CreateGridItem(InventoryObject obj)
+    public InventoryObject CreateInventoryObject(int prefabId, List<Category> categories)
+    {
+        GameObject prefab = objectDatabase.GetPrefabById(prefabId);
+        return new InventoryObject(Guid.NewGuid(), prefabId, prefab.GetComponent<SpriteRenderer>().sprite, 1, categories);
+    }
+
+    public Item CreateGridItem(InventoryObject obj) //this is the same as the other function, check why and how to not duplicate
     {
         GameObject prefab = objectDatabase.GetPrefabById(obj.PrefabId);
         Vector3 position = Input.mousePosition;
@@ -42,9 +49,9 @@ public class GameItemFactory : MonoBehaviour
         Item item = AttachItemComponent(newObj);
 
         newObj.SetActive(true);
-        //InitializeItem(item, obj.PrefabId, new Vector2Int(obj.x, obj.y));
+        InitializeItem(item, obj.PrefabId, default);
         onItemCreated?.Invoke(item);
-        //Debug.Log("create grid item called");
+        Debug.Log("create grid item from inventory object called");
         return item;
     }
 

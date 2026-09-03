@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using UnityEngine;
 using System;
 using UnityEngine.EventSystems;
+using TMPro;
 
 public class InventorySlot : MonoBehaviour, IPointerClickHandler
 {
@@ -14,6 +15,9 @@ public class InventorySlot : MonoBehaviour, IPointerClickHandler
 
     [SerializeField]
     Transform itemHoverFrame;
+
+    [SerializeField]
+    Transform amountText;
 
     InventoryObject obj;
     public Action<InventoryObject> onSlotClicked;
@@ -35,6 +39,12 @@ public class InventorySlot : MonoBehaviour, IPointerClickHandler
         {
             Debug.Log("InventroySlot does not have an item image!");
         }
+
+        if (amountText == null)
+        {
+            Debug.Log("InventroySlot does not have an amount text!");
+        }
+
     }
 
     public void Initialize(InventoryObject item, Vector2 slotSize = default(Vector2))
@@ -62,7 +72,16 @@ public class InventorySlot : MonoBehaviour, IPointerClickHandler
             if (rtFrame != null)
             {
                 rtFrame.sizeDelta = slotSize;
-                Debug.Log("the frame size delta is" + rtFrame.sizeDelta);
+            }
+            RectTransform rtAmount = amountText.GetComponent<RectTransform>();
+            if (rtAmount != null)
+            {
+                rtAmount.sizeDelta = slotSize;
+            }
+            TextMeshProUGUI text = amountText.GetComponent<TextMeshProUGUI>();
+            if (text != null)
+            {
+                text.text = item.Amount.ToString();
             }
         }
     }

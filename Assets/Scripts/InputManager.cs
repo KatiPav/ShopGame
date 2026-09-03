@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
+
 public class InputManager : MonoBehaviour
 {
     public event Action OnClick;
@@ -10,6 +11,11 @@ public class InputManager : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
+            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+            {
+                return; // click was consumed by UI, don't propagate to world logic
+            }
+
             OnClick?.Invoke();
         }
     }

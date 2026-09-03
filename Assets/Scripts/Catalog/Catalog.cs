@@ -1,6 +1,4 @@
 
-
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,26 +9,56 @@ public class Catalog
     public static Catalog Instance { get; } = new Catalog();
 
     public Action<InventoryObject> onInventoryObjectAdded;
-    Dictionary<string, InventoryObject> allObjects = new Dictionary<string, InventoryObject>();
 
-    Dictionary<Category, HashSet<string>> categoryObjects = new Dictionary<Category, HashSet<string>>();
+    //the key is the Prefab ID
+    Dictionary<int, InventoryObject> allObjects = new Dictionary<int, InventoryObject>();
+
+    //objects need to be easily accesible by categories so we keep track of the category and its objects(by PrefabId)
+    Dictionary<Category, HashSet<int>> categoryObjects = new Dictionary<Category, HashSet<int>>();
 
     private Catalog()
     {
         foreach (Category c in Enum.GetValues(typeof(Category)))
         {
-            categoryObjects.Add(c, new HashSet<string>());
+            categoryObjects.Add(c, new HashSet<int>());
         }
+    }
+    public InventoryObject GetInventoryObject(int prefabId)
+    {
+        if (allObjects.ContainsKey(prefabId))
+        {
+            return allObjects[prefabId];
+        }
+        else return null;
+
     }
 
     public void Add(InventoryObject obj)
     {
-        allObjects.Add(obj.Id, obj);
-        foreach (var category in obj.Categories)
+        if (allObjects.ContainsKey(obj.PrefabId))
         {
-            categoryObjects[category].Add(obj.Id);
+            allObjects[obj.PrefabId] = obj;
+            //no need to update the categories as they are already set
+            return;
         }
-        onInventoryObjectAdded.Invoke(obj);
+
+        allObjects.Add(obj.PrefabId, obj);
+        foreach (Category c in obj.Categories)
+        {
+            categoryObjects[c].Add(obj.PrefabId);
+        }
+
+
+
+    }
+
+    public void Remove(InventoryObject iObj)
+    {
+        allObjects.Remove(iObj.PrefabId);
+        foreach (Category c in iObj.Categories)
+        {
+            categoryObjects[c].Remove(iObj.PrefabId);
+        }
     }
 
     public List<InventoryObject> GetAllObjects()
@@ -41,23 +69,12 @@ public class Catalog
     public List<InventoryObject> GetObjectsOfCategory(Category category)
     {
         List<InventoryObject> result = new List<InventoryObject>();
-        foreach (string id in categoryObjects[category])
+        foreach (int prefabId in categoryObjects[category])
         {
-            result.Add(allObjects[id]);
+            result.Add(allObjects[prefabId]);
         }
+        Debug.Log("We found " + result.Count + "objects of category " + category.ToString());
         return result;
-    }
-
-    public InventoryObject Remove(InventoryObject objToRemove)
-    {
-        foreach (var category in objToRemove.Categories)
-        {
-            categoryObjects[category].Remove(objToRemove.Id);
-        }
-        allObjects.Remove(objToRemove.Id);
-
-        return objToRemove;
-
     }
 
 }

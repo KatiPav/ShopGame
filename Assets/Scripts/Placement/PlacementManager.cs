@@ -19,6 +19,10 @@ public class PlacementManager : MonoBehaviour
     [SerializeField]
     GridConverter gridConverter;
 
+    [SerializeField]
+    CatalogController catalogController;
+
+
     Item pickedUpItem = null;
     bool IsHolding => pickedUpItem != null;
 
@@ -54,7 +58,9 @@ public class PlacementManager : MonoBehaviour
     void Update()
     {
         if (IsHolding)
+        {
             UpdatePositionOfPickedUpObject();
+        }
     }
     public void Click()
     {
@@ -160,16 +166,20 @@ public class PlacementManager : MonoBehaviour
         }
         else if (IsHolding && originalCoordintes == default)
         {
-            ReturnToInventory(pickedUpItem);
+            ReturnHeldItemToInventory();
         }
 
         pickedUpItem = item;
         Debug.Log("item was created and is currently held?");
     }
 
-    private void ReturnToInventory(Item item)
+    public Item GiveOwnershipOfHeldItem()
     {
-        //Catalog.Instance.Add(item);
+
+        Item result = pickedUpItem;
+        pickedUpItem = null;
+        return result;
+
     }
 
     private void ReturnToLastCoordinates(Item item)
@@ -178,7 +188,10 @@ public class PlacementManager : MonoBehaviour
         gridRegistry.AddItem(item);
     }
 
-
-
+    private void ReturnHeldItemToInventory()
+    {
+        catalogController.AddItemToCatalog(pickedUpItem);
+        pickedUpItem = null;
+    }
 }
 

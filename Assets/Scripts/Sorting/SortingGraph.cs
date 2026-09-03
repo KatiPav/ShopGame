@@ -51,7 +51,7 @@ public class SortingGraph : MonoBehaviour
     void CreateSortingNode(Item item)
     {
         SortingGraphNode node = item.gameObject.AddComponent<SortingGraphNode>();
-
+        node.onNodeDestroyed += RemoveNode;
         if (!item.ItemIsInPreview) //this maybe should not be here
         {
             UpdateOrderingWithinBounds(node.GetSpRendererBounds());
@@ -59,6 +59,12 @@ public class SortingGraph : MonoBehaviour
 
             UpdateOrdering();
         }
+    }
+    void RemoveNode(SortingGraphNode node)
+    {
+        nodes.Remove(node);
+        foreach (var n in nodes)
+            n.edges.Remove(node);
     }
 
     void UpdateOrderingWithinBounds(Bounds bounds)

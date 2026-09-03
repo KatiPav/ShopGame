@@ -19,10 +19,10 @@ public class TilemapManager : MonoBehaviour
 
             switch (item.ItemType)
             {
-                case ItemType.Furniture:
+                case Category.Furniture:
                     if (!floorTilemap.HasTile(pos)) return false;
                     break;
-                case ItemType.Decoration:
+                case Category.Decoration:
                     if (!floorTilemap.HasTile(pos)) return false;
                     break;
             }

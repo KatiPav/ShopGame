@@ -43,15 +43,17 @@ public class SaveManager : MonoBehaviour
         foreach (InventoryObjectDto obj in saveData.saveObjects.inventoryObjects)
         {
             InventoryObject item = factory.CreateInventoryObject(obj);
-            Catalog.Instance.Add(item); //is it better for catalog to ba an actual object?
+            Catalog.Instance.Add(item); //might be better to use catalog controller here?
         }
 
 
         List<Category> cats = new List<Category>();
+        List<Category> cats2 = new List<Category>();
         cats.Add(Category.Furniture);
+        cats2.Add(Category.Decoration);
 
-        InventoryObjectDto test1 = MakeTestInventoryObject(0, cats, 4);
-        InventoryObjectDto test2 = MakeTestInventoryObject(4, cats, 4);
+        InventoryObjectDto test1 = MakeTestInventoryObject(0, cats2, 1);
+        InventoryObjectDto test2 = MakeTestInventoryObject(4, cats, 1);
 
         InventoryObject itemtest = factory.CreateInventoryObject(test1);
         InventoryObject itemtest2 = factory.CreateInventoryObject(test2);

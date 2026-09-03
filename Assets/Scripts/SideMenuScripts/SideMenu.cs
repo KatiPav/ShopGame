@@ -11,7 +11,7 @@ public class SideMenu : MonoBehaviour
     PlacementManager PlacementManager;
 
     [SerializeField]
-    GameItemFactory Factory;
+    CatalogController catalogController;
 
     [SerializeField]
     Category defaultCategory = Category.Furniture;
@@ -37,10 +37,21 @@ public class SideMenu : MonoBehaviour
             Debug.Log("Side menu does not have a Rect Transform. Objects may be positioned wrong.");
         }
 
-        Catalog.Instance.onInventoryObjectAdded += CreateInventorySlot;
+        catalogController.onItemAddedToCatalog += HandleItemAdded;
+        catalogController.onItemRemovedFromCatalog += HandleItemRemoved;
 
         ResizeLayout();
+    }
+
+    public void OnDisable()
+    {
+        //catalogController.onItemAddedToCatalog -= HandleItemAdded;
+    }
+
+    public void Start()
+    {
         CreateInventorySlots();
+
     }
 
     private void CreateInventorySlots()
@@ -49,6 +60,32 @@ public class SideMenu : MonoBehaviour
         {
             CreateInventorySlot(item);
         }
+    }
+
+    private void HandleItemAdded()
+    {
+        Debug.Log("Helllooooo??? added to side");
+        //TODO: fix this so no need to refresh the whole menu
+        DestroySlots();
+        CreateInventorySlots();
+
+    }
+    private void HandleItemRemoved()
+    {
+        Debug.Log("Helllooooo??? removed from side");
+        //TODO: fix this so no need to refresh the whole menu
+        DestroySlots();
+        CreateInventorySlots();
+
+    }
+
+    private void DestroySlots()
+    {
+        foreach (var s in slots)
+        {
+            Destroy(s.gameObject);
+        }
+        slots.Clear();
     }
 
     private void CreateInventorySlot(InventoryObject obj)
@@ -67,7 +104,8 @@ public class SideMenu : MonoBehaviour
     private void HandleSlotClicked(InventoryObject obj)
     {
         Debug.Log("Slot clicked." + obj);
-        Item spawned = Factory.CreateGridItem(obj);
+        Item spawned = catalogController.PullItemFromCatalog(obj);
+
         PlacementManager.SetPickedItem(spawned);
     }
 

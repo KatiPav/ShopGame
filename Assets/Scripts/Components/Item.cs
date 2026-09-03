@@ -8,7 +8,9 @@ public class Item : MonoBehaviour
     private ItemRuntimeSet itemRuntimeSet;
 
     [SerializeField]
-    public ItemType ItemType;
+    public Category ItemType;  //TODO: fix this 
+
+    public List<Category> Categories = new List<Category>();
 
     public Guid Id { get; set; }
     public Vector2Int GridCoordinates { get; set; }
@@ -44,6 +46,7 @@ public class Item : MonoBehaviour
             Debug.Log("Item could not find the grid.");
         }
 
+        Categories.Add(ItemType);
     }
 
     public void Initialize(int prefabId, Vector2Int coordinates, ItemRuntimeSet itemRuntimeSet)

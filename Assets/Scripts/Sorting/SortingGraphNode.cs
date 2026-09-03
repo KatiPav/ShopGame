@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System.Linq;
+using System;
 
 public class SortingGraphNode : MonoBehaviour
 {
@@ -8,6 +8,7 @@ public class SortingGraphNode : MonoBehaviour
     SpriteRenderer spRenderer;
 
     public List<SortingGraphNode> edges;
+    public event Action<SortingGraphNode> onNodeDestroyed;
 
     void Awake()
     {
@@ -113,4 +114,5 @@ public class SortingGraphNode : MonoBehaviour
     {
         spRenderer.sortingOrder = sortOrder;
     }
+    void OnDestroy() => onNodeDestroyed?.Invoke(this);
 }

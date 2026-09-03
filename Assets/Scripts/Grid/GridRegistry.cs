@@ -34,9 +34,9 @@ public class GridRegistry : MonoBehaviour
     {
         switch (item.ItemType)
         {
-            case ItemType.Furniture:
+            case Category.Furniture:
                 return furnitureGridData.TryAddItem(item);
-            case ItemType.Decoration:
+            case Category.Decoration:
                 return decorationsGridData.TryAddItem(item);
         }
         return false;
