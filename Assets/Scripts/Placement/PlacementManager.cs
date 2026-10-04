@@ -164,7 +164,7 @@ public class PlacementManager : MonoBehaviour
             return;
         }
         originalCoordintes = item.GridCoordinates;
-        pickedUpItem = gridRegistry.PullItem(item);
+        pickedUpItem = gridRegistry.RemoveItem(item);
     }
 
     public void SetPickedItem(Item item)

@@ -13,7 +13,7 @@ public class TilemapManager : MonoBehaviour
 
     public bool CanPlaceItemOnTilemap(Item item, Vector2Int coords)
     {
-        foreach (Vector2Int cell in item.FloorShape.GetFloorCellsWithOrigin(coords))
+        foreach (Vector2Int cell in item.shape.GetCellsWithOrigin(coords))
         {
             Vector3Int pos = new Vector3Int(cell.x, cell.y, 0);
 

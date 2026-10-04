@@ -7,16 +7,29 @@ public class GridRegistry : MonoBehaviour
 {
     [SerializeField]
     Grid gridCoordinates;
-    FurnitureGridData furnitureGridData = new FurnitureGridData();
-    DecorationsGridData decorationsGridData = new DecorationsGridData();
+    BaseGridData furnitureGridData = new BaseGridData();
+    BaseGridData decorationsGridData = new BaseGridData();
 
-    public Item PullItem(Item item)
+    BaseGridData wallDecorationsGridData = new BaseGridData();
+
+    public Item RemoveItem(Item item)
     {
-        if (decorationsGridData.TryPullItem(item) || furnitureGridData.TryPullItem(item))
+
+        if (item.ItemType == Category.WallDecoration && wallDecorationsGridData.RemoveItem(item))
         {
             return item;
         }
-        Debug.Log("object not in grids!");
+
+        if (item.ItemType == Category.Decoration && decorationsGridData.RemoveItem(item))
+        {
+            return item;
+        }
+        if (item.ItemType == Category.Furniture && furnitureGridData.RemoveItem(item))
+        {
+            return item;
+        }
+
+        Debug.Log("Failed to remove object from registry! Object not in grids!");
         return null;
     }
 
@@ -38,14 +51,17 @@ public class GridRegistry : MonoBehaviour
                 return furnitureGridData.TryAddItem(item);
             case Category.Decoration:
                 return decorationsGridData.TryAddItem(item);
+            case Category.WallDecoration:
+                return wallDecorationsGridData.TryAddItem(item);
         }
+
         return false;
     }
 
     public bool CanPlaceItemAt(Vector2Int coords, Item item)
     {
 
-        foreach (Vector2Int cell in item.FloorShape.GetFloorCellsWithOrigin(coords))
+        foreach (Vector2Int cell in item.shape.GetCellsWithOrigin(coords))
         {
             if (furnitureGridData.HasPlacedItem(cell)) return false;
             if (decorationsGridData.HasPlacedItem(cell)) return false;
@@ -81,16 +97,6 @@ public class GridRegistry : MonoBehaviour
             }
         }
         return canPlace;
-    }
-
-    public List<GameObject> GetFurniture()
-    {
-        return furnitureGridData.getItems();
-    }
-
-    public List<GameObject> GetDecorations()
-    {
-        return decorationsGridData.getItems();
     }
 
     public List<GameObject> GetAllObjects()

@@ -2,5 +2,6 @@
 public enum Category
 {
     Furniture,
-    Decoration
+    Decoration,
+    WallDecoration
 }

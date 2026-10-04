@@ -16,7 +16,7 @@ public class Item : MonoBehaviour
     public Vector2Int GridCoordinates { get; set; }
     public int PrefabId { get; set; }
 
-    public FloorShape FloorShape { get; set; }
+    public ShapePrint shape { get; set; }
     private Grid GameGrid { get; set; }
 
     Collider2D Collider2D { get; set; }
@@ -28,10 +28,10 @@ public class Item : MonoBehaviour
     void Awake()
     {
         Id = Guid.NewGuid();
-        FloorShape = GetComponent<FloorShape>();
-        if (FloorShape == null)
+        shape = GetComponent<ShapePrint>();
+        if (shape == null)
         {
-            Debug.Log("Item does not have a floor shape!");
+            Debug.Log("Item does not have a shape!");
         }
 
         sr = GetComponent<SpriteRenderer>();
@@ -82,20 +82,20 @@ public class Item : MonoBehaviour
 
     public Vector2Int GetMinXSquare()
     {
-        return FloorShape.GetMinXWithOrigin(GridCoordinates);
+        return shape.GetMinXWithOrigin(GridCoordinates);
     }
 
     public Vector2Int GetMinYSquare()
     {
-        return FloorShape.GetMinYWithOrigin(GridCoordinates);
+        return shape.GetMinYWithOrigin(GridCoordinates);
     }
     public Vector2Int GetMaxXSquare()
     {
-        return FloorShape.GetMaxXWithOrigin(GridCoordinates);
+        return shape.GetMaxXWithOrigin(GridCoordinates);
     }
     public Vector2Int GetMaxYSquare()
     {
-        return FloorShape.GetMaxYWithOrigin(GridCoordinates);
+        return shape.GetMaxYWithOrigin(GridCoordinates);
     }
 
 }
