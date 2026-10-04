@@ -121,6 +121,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Item
   ItemType: 1
+  ItemIsInPreview: 0
 --- !u!50 &9182368829023331045
 Rigidbody2D:
   serializedVersion: 5

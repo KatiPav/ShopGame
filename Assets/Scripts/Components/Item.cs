@@ -8,7 +8,9 @@ public class Item : MonoBehaviour
     private ItemRuntimeSet itemRuntimeSet;
 
     [SerializeField]
-    public ItemType ItemType;
+    public Category ItemType;  //TODO: fix this 
+
+    public List<Category> Categories = new List<Category>();
 
     public Guid Id { get; set; }
     public Vector2Int GridCoordinates { get; set; }
@@ -18,18 +20,33 @@ public class Item : MonoBehaviour
     private Grid GameGrid { get; set; }
 
     Collider2D Collider2D { get; set; }
+    private SpriteRenderer sr;
+
+    public bool ItemIsInPreview = false;
 
 
     void Awake()
     {
         Id = Guid.NewGuid();
         FloorShape = GetComponent<FloorShape>();
+        if (FloorShape == null)
+        {
+            Debug.Log("Item does not have a floor shape!");
+        }
+
+        sr = GetComponent<SpriteRenderer>();
+        if (sr == null)
+        {
+            Debug.Log("Item does not have a Sprite Renderer!");
+        }
+
         GameGrid = FindAnyObjectByType<Grid>();
         if (GameGrid == null)
         {
             Debug.Log("Item could not find the grid.");
         }
 
+        Categories.Add(ItemType);
     }
 
     public void Initialize(int prefabId, Vector2Int coordinates, ItemRuntimeSet itemRuntimeSet)
@@ -44,6 +61,15 @@ public class Item : MonoBehaviour
 
     private void OnDisable() => itemRuntimeSet?.Remove(this);
 
+    public void SetPreview(bool state)
+    {
+        ItemIsInPreview = state;
+        if (state)
+        {
+            sr.sortingOrder = 1000;
+        }
+    }
+
     public void MoveTo(Vector2Int coords, GridConverter gridConverter)
     {
         Vector3 worldPos = gridConverter.GridCoordsToWorldCoords(coords);
@@ -51,6 +77,8 @@ public class Item : MonoBehaviour
         gameObject.transform.position = gridConverter.GridCoordsToWorldCoords(coords);
         GridCoordinates = coords;
     }
+
+
 
     public Vector2Int GetMinXSquare()
     {

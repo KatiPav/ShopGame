@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System.Linq;
+using System;
 
 public class SortingGraphNode : MonoBehaviour
 {
@@ -8,6 +8,7 @@ public class SortingGraphNode : MonoBehaviour
     SpriteRenderer spRenderer;
 
     public List<SortingGraphNode> edges;
+    public event Action<SortingGraphNode> onNodeDestroyed;
 
     void Awake()
     {
@@ -89,8 +90,6 @@ public class SortingGraphNode : MonoBehaviour
         }
         else if (otherMinX >= maxX)
         {
-            Debug.Log(item.name + "should be on top of " + otherItem.name);
-
             return true;
         }
 
@@ -103,7 +102,6 @@ public class SortingGraphNode : MonoBehaviour
         }
         else if (otherMinY >= maxY)
         {
-            Debug.Log(item.name + "should be on top of " + otherItem.name);
             return true;
         }
 
@@ -116,4 +114,5 @@ public class SortingGraphNode : MonoBehaviour
     {
         spRenderer.sortingOrder = sortOrder;
     }
+    void OnDestroy() => onNodeDestroyed?.Invoke(this);
 }

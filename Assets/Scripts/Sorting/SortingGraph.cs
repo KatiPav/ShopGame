@@ -10,10 +10,10 @@ using System.Linq;
 public class SortingGraph : MonoBehaviour
 {
     [SerializeField]
-    PlacementManager placementManager;
+    MovementManager movementManager;
 
     [SerializeField]
-    GridObjectFactory factory;
+    GameItemFactory factory;
 
     [SerializeField]
     GridConverter gridConverter;
@@ -28,7 +28,7 @@ public class SortingGraph : MonoBehaviour
     void Awake()
     {
         factory.onItemCreated += CreateSortingNode;
-        placementManager.OnItemMoved += UpdateGraphForItemMoved;
+        movementManager.OnItemMoved += UpdateGraphForItemMoved;
     }
 
     void Start()
@@ -45,17 +45,26 @@ public class SortingGraph : MonoBehaviour
     void OnDestroy()
     {
         factory.onItemCreated -= CreateSortingNode;
-        placementManager.OnItemMoved -= UpdateGraphForItemMoved;
+        movementManager.OnItemMoved -= UpdateGraphForItemMoved;
     }
 
     void CreateSortingNode(Item item)
     {
         SortingGraphNode node = item.gameObject.AddComponent<SortingGraphNode>();
+        node.onNodeDestroyed += RemoveNode;
+        if (!item.ItemIsInPreview) //this maybe should not be here
+        {
+            UpdateOrderingWithinBounds(node.GetSpRendererBounds());
+            nodes.Add(node);
 
-        UpdateOrderingWithinBounds(node.GetSpRendererBounds());
-        nodes.Add(node);
-
-        UpdateOrdering();
+            UpdateOrdering();
+        }
+    }
+    void RemoveNode(SortingGraphNode node)
+    {
+        nodes.Remove(node);
+        foreach (var n in nodes)
+            n.edges.Remove(node);
     }
 
     void UpdateOrderingWithinBounds(Bounds bounds)
@@ -80,7 +89,14 @@ public class SortingGraph : MonoBehaviour
 
     void UpdateGraphForItemMoved(Item item, Vector2Int oldPosition, Vector2Int newPosition)
     {
+
+
         SortingGraphNode itemNode = item.gameObject.GetComponent<SortingGraphNode>();
+
+        if (item.ItemIsInPreview) //this maybe should not be here
+        {
+            return;
+        }
         Bounds newBounds = itemNode.GetSpRendererBounds();
 
 

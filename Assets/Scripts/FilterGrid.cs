@@ -50,7 +50,6 @@ public class FilterGrid : MonoBehaviour
     {
         if (x < xCount && y < yCount && x >= 0 && y >= 0)
         {
-            Debug.Log("click");
             grid[xCount * y + x] = !grid[xCount * y + x];
         }
     }
