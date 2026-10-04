@@ -89,7 +89,6 @@ public class InventorySlot : MonoBehaviour, IPointerClickHandler
     public void OnPointerClick(PointerEventData pointerEventData)
     {
         onSlotClicked.Invoke(obj);
-        Debug.Log("slot ckicked");
     }
 
 

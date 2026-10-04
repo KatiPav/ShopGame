@@ -64,10 +64,19 @@ public class PlacementManager : MonoBehaviour
     }
     public void Click()
     {
-        if (IsHolding)
-            PlaceHeldItem();
-        else
+        if (!IsHolding)
+        {
             PickUpItem();
+            return;
+        }
+
+        if (pickedUpItem.ItemIsInPreview)
+        {
+            ReturnHeldItemToInventory();
+            return;
+        }
+
+        PlaceHeldItem();
     }
 
     public void UpdatePositionOfPickedUpObject()
@@ -191,6 +200,8 @@ public class PlacementManager : MonoBehaviour
     private void ReturnHeldItemToInventory()
     {
         catalogController.AddItemToCatalog(pickedUpItem);
+        Destroy(pickedUpItem.gameObject);
+        Debug.Log("picked up item is " + pickedUpItem);
         pickedUpItem = null;
     }
 }
