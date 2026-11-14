@@ -61,37 +61,43 @@ public class SaveManager : MonoBehaviour
             catalogController.AddNewInventoryObjectToCatalog(iObj);
         }
 
-
-        List<Category> cats = new List<Category>();
-        List<Category> cats2 = new List<Category>();
-        cats.Add(Category.Furniture);
-        cats2.Add(Category.Decoration);
-
-        InventoryObjectDto test1 = MakeTestInventoryObject(0, cats2, 1);
-        InventoryObjectDto test2 = MakeTestInventoryObject(4, cats, 1);
+        InventoryObjectDto test1 = MakeTestInventoryObject(6, 3);
+        InventoryObjectDto test2 = MakeTestInventoryObject(1, 3);
+        InventoryObjectDto test3 = MakeTestInventoryObject(2, 3);
+        InventoryObjectDto test4 = MakeTestInventoryObject(4, 3);
+        InventoryObjectDto test5 = MakeTestInventoryObject(3, 3);
+        // InventoryObjectDto test2 = MakeTestInventoryObject(4, Category.Decoration, 1);
+        // InventoryObjectDto test3 = MakeTestInventoryObject(0, Category.WallDecoration, 2);
 
         InventoryObject itemtest = factory.CreateInventoryObject(test1);
         InventoryObject itemtest2 = factory.CreateInventoryObject(test2);
-        //catalogController.AddNewInventoryObjectToCatalog(itemtest);
-        //catalogController.AddNewInventoryObjectToCatalog(itemtest2);
+        InventoryObject itemtest3 = factory.CreateInventoryObject(test3);
+        InventoryObject itemtest4 = factory.CreateInventoryObject(test4);
+        InventoryObject itemtest5 = factory.CreateInventoryObject(test5);
+
+        catalogController.AddNewInventoryObjectToCatalog(itemtest);
+        catalogController.AddNewInventoryObjectToCatalog(itemtest2);
+        //catalogController.AddNewInventoryObjectToCatalog(itemtest3);
+        //catalogController.AddNewInventoryObjectToCatalog(itemtest4);
+        //catalogController.AddNewInventoryObjectToCatalog(itemtest5);
         //Debug.Log("added 2 test object to catalog");
 
     }
 
-    private InventoryObjectDto MakeTestInventoryObject(int prefabId, List<Category> cats, int amount)
+    private InventoryObjectDto MakeTestInventoryObject(int prefabId, int amount)
     {
-        return new InventoryObjectDto(Guid.NewGuid(), prefabId, cats, amount);
+        return new InventoryObjectDto(Guid.NewGuid(), prefabId, amount);
     }
 
     PlacedObjectDto PlacedObjectToPlacedObjectDto(GameObject itemObj)
     {
         Item item = itemObj.GetComponent<Item>();
-        return new PlacedObjectDto(item.GridCoordinates, item.PrefabId, item.ItemType);
+        return new PlacedObjectDto(item.GridCoordinates, item.PrefabId, item.planeCategory);
     }
 
     InventoryObjectDto InventoryObjectToInventoryObjectDto(InventoryObject iObj)
     {
-        return new InventoryObjectDto(iObj.Id, iObj.PrefabId, iObj.Categories, iObj.Amount);
+        return new InventoryObjectDto(iObj.Id, iObj.PrefabId, iObj.Amount);
     }
 
     public void SaveGame()

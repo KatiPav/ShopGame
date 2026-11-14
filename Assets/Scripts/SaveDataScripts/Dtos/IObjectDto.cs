@@ -1,5 +1,5 @@
 public interface IObjectDto
 {
-    int PrefabId { get; set; }
+    public int PrefabId { get; set; }
 
 }

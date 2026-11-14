@@ -24,7 +24,7 @@ public class CatalogController : MonoBehaviour
 
         if (iObj == null)
         {
-            iObj = factory.CreateInventoryObject(item.PrefabId, item.Categories);
+            iObj = factory.CreateInventoryObject(item.PrefabId, item.catalogCategory);
         }
         else
         {

@@ -22,12 +22,12 @@ public class PlacementManager : MonoBehaviour
     [SerializeField]
     CatalogController catalogController;
 
-
     Item pickedUpItem = null;
     bool IsHolding => pickedUpItem != null;
 
     Vector2Int originalCoordintes = default;
     Vector2Int lastCoordinates = new Vector2Int(0, 0);
+
     bool hasLastCoordinates;
 
     void Awake()
@@ -62,6 +62,7 @@ public class PlacementManager : MonoBehaviour
             UpdatePositionOfPickedUpObject();
         }
     }
+
     public void Click()
     {
         if (!IsHolding)
@@ -81,7 +82,8 @@ public class PlacementManager : MonoBehaviour
 
     public void UpdatePositionOfPickedUpObject()
     {
-        Vector2Int coords = gridConverter.GetGridCoordinatesOfMousePosition();
+
+        Vector2Int coords = gridConverter.GetGridCoordinatesOfMousePosition(pickedUpItem.planeCategory);//hmmmmmm
 
         if (pickedUpItem == null)
         {
@@ -163,6 +165,7 @@ public class PlacementManager : MonoBehaviour
         {
             return;
         }
+
         originalCoordintes = item.GridCoordinates;
         pickedUpItem = gridRegistry.RemoveItem(item);
     }

@@ -8,9 +8,10 @@ public class Item : MonoBehaviour
     private ItemRuntimeSet itemRuntimeSet;
 
     [SerializeField]
-    public Category ItemType;  //TODO: fix this 
+    public PlaneCategory planeCategory;
 
-    public List<Category> Categories = new List<Category>();
+    [SerializeField]
+    public CatalogCategory catalogCategory;
 
     public Guid Id { get; set; }
     public Vector2Int GridCoordinates { get; set; }
@@ -34,6 +35,8 @@ public class Item : MonoBehaviour
             Debug.Log("Item does not have a shape!");
         }
 
+        //todo: add check if shape matches category
+
         sr = GetComponent<SpriteRenderer>();
         if (sr == null)
         {
@@ -46,14 +49,15 @@ public class Item : MonoBehaviour
             Debug.Log("Item could not find the grid.");
         }
 
-        Categories.Add(ItemType);
     }
 
-    public void Initialize(int prefabId, Vector2Int coordinates, ItemRuntimeSet itemRuntimeSet)
+    public void Initialize(int prefabId, Vector2Int coordinates, ItemRuntimeSet itemRuntimeSet, CatalogCategory catalogCategory, PlaneCategory planeCategory)
     {
         this.itemRuntimeSet = itemRuntimeSet;
         PrefabId = prefabId;
         GridCoordinates = coordinates;
+        this.catalogCategory = catalogCategory;
+        this.planeCategory = planeCategory;
 
         itemRuntimeSet.Add(this);
 
@@ -72,9 +76,8 @@ public class Item : MonoBehaviour
 
     public void MoveTo(Vector2Int coords, GridConverter gridConverter)
     {
-        Vector3 worldPos = gridConverter.GridCoordsToWorldCoords(coords);
 
-        gameObject.transform.position = gridConverter.GridCoordsToWorldCoords(coords);
+        gameObject.transform.position = gridConverter.GridCoordsToWorldCoords(coords, planeCategory);
         GridCoordinates = coords;
     }
 

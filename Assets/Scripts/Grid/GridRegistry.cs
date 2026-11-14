@@ -5,26 +5,15 @@ using System.Linq;
 
 public class GridRegistry : MonoBehaviour
 {
-    [SerializeField]
-    Grid gridCoordinates;
-    BaseGridData furnitureGridData = new BaseGridData();
-    BaseGridData decorationsGridData = new BaseGridData();
-
-    BaseGridData wallDecorationsGridData = new BaseGridData();
+    BaseGridData floorGridData = new BaseGridData();
+    BaseGridData leftWallGridData = new BaseGridData();
+    BaseGridData rightWallGridData = new BaseGridData();
 
     public Item RemoveItem(Item item)
     {
+        BaseGridData grid = GetGridByCategory(item.planeCategory);
 
-        if (item.ItemType == Category.WallDecoration && wallDecorationsGridData.RemoveItem(item))
-        {
-            return item;
-        }
-
-        if (item.ItemType == Category.Decoration && decorationsGridData.RemoveItem(item))
-        {
-            return item;
-        }
-        if (item.ItemType == Category.Furniture && furnitureGridData.RemoveItem(item))
+        if (grid.RemoveItem(item))
         {
             return item;
         }
@@ -45,29 +34,37 @@ public class GridRegistry : MonoBehaviour
 
     private bool TryAddToAppropriateGrid(Item item)
     {
-        switch (item.ItemType)
-        {
-            case Category.Furniture:
-                return furnitureGridData.TryAddItem(item);
-            case Category.Decoration:
-                return decorationsGridData.TryAddItem(item);
-            case Category.WallDecoration:
-                return wallDecorationsGridData.TryAddItem(item);
-        }
+        BaseGridData grid = GetGridByCategory(item.planeCategory);
 
-        return false;
+        return grid.TryAddItem(item);
     }
 
     public bool CanPlaceItemAt(Vector2Int coords, Item item)
     {
+        BaseGridData grid = GetGridByCategory(item.planeCategory);
 
         foreach (Vector2Int cell in item.shape.GetCellsWithOrigin(coords))
         {
-            if (furnitureGridData.HasPlacedItem(cell)) return false;
-            if (decorationsGridData.HasPlacedItem(cell)) return false;
+            if (grid.HasPlacedItem(cell)) return false;
         }
         return true;
     }
+
+    private BaseGridData GetGridByCategory(PlaneCategory cat)
+    {
+        switch (cat)
+        {
+            case PlaneCategory.Floor:
+                return floorGridData;
+            case PlaneCategory.LeftWall:
+                return leftWallGridData;
+            case PlaneCategory.RightWall:
+                return rightWallGridData;
+        }
+        Debug.Log("Something is wrong, item has a weird type and registry is confused!");
+        return floorGridData;
+    }
+
     public bool CanPlaceItemInOrAraoundCoords(Item item, Vector2Int coords, out Vector2Int outCoords)
     {
         Vector2Int[] offsets =
@@ -83,7 +80,6 @@ public class GridRegistry : MonoBehaviour
             new Vector2Int(1, 1)
         };
 
-        bool canPlace = false;
         outCoords = coords;
         foreach (Vector2Int offset in offsets)
         {
@@ -91,18 +87,17 @@ public class GridRegistry : MonoBehaviour
 
             if (CanPlaceItemAt(newCoords, item))
             {
-                canPlace = true;
                 outCoords = newCoords;
-                break;
+                return true;
             }
         }
-        return canPlace;
+        return false;
     }
 
     public List<GameObject> GetAllObjects()
     {
-        List<GameObject> furniture = furnitureGridData.getItems();
-        List<GameObject> decorations = decorationsGridData.getItems();
-        return furniture.Concat(decorations).ToList();
+        List<GameObject> floor = floorGridData.getItems();
+        List<GameObject> leftwall = leftWallGridData.getItems();
+        return floor.Concat(leftwall).ToList();
     }
 }

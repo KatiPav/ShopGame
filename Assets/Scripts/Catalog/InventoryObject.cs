@@ -12,15 +12,15 @@ public class InventoryObject
 
     public int Amount { get; set; }
 
-    public List<Category> Categories { get; private set; }
+    public CatalogCategory CatalogCat { get; private set; }
 
-    public InventoryObject(Guid id, int prefabId, Sprite sprite, int amount, List<Category> categories)
+    public InventoryObject(Guid id, int prefabId, Sprite sprite, int amount, CatalogCategory category)
     {
         Id = id;
         PrefabId = prefabId;
         ObjectSprite = sprite;
         Amount = amount;
-        Categories = categories;
+        CatalogCat = category;
 
     }
 }

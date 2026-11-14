@@ -14,7 +14,7 @@ public class SideMenu : MonoBehaviour
     CatalogController catalogController;
 
     [SerializeField]
-    Category defaultCategory = Category.Furniture;
+    CatalogCategory SideMenuCategory = CatalogCategory.Furniture;
 
     GridLayoutGroup layout;
 
@@ -46,6 +46,8 @@ public class SideMenu : MonoBehaviour
     public void OnDisable()
     {
         //catalogController.onItemAddedToCatalog -= HandleItemAdded;
+        //catalogController.onItemRemovedFromCatalog -= HandleItemRemoved;
+
     }
 
     public void Start()
@@ -58,7 +60,7 @@ public class SideMenu : MonoBehaviour
     {
         DestroySlots();
 
-        foreach (var item in Catalog.Instance.GetObjectsOfCategory(defaultCategory))
+        foreach (var item in Catalog.Instance.GetObjectsOfCategory(SideMenuCategory))
         {
             CreateInventorySlot(item);
         }
@@ -91,7 +93,7 @@ public class SideMenu : MonoBehaviour
 
     private void CreateInventorySlot(InventoryObject obj)
     {
-        if (obj.Categories.Contains(defaultCategory))
+        if (obj.CatalogCat == SideMenuCategory)
         {
             InventorySlot slot = Instantiate(InventorySlotPrefab);
             slot.transform.SetParent(gameObject.transform, false);

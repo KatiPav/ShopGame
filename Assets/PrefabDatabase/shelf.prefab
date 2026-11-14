@@ -155,7 +155,7 @@ PolygonCollider2D:
       - {x: 0.7208377, y: 0.72236085}
       - {x: 0.72314274, y: 0.59254766}
     - - {x: -1.7191705, y: 1.4924939}
-      - {x: -1.2634362, y: 1.3003838}
+      - {x: -1.2701253, y: 1.2803171}
       - {x: -1.7124594, y: 1.0881417}
     - - {x: 0.2697116, y: 1.6619623}
       - {x: 0.7342597, y: 1.9121656}
@@ -178,7 +178,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40194aa4c352f85408a44851a7d71a6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Item
-  ItemType: 0
+  planeCategory: 0
+  catalogCategory: 0
+  ItemIsInPreview: 0
 --- !u!114 &8148510546844972752
 MonoBehaviour:
   m_ObjectHideFlags: 0
