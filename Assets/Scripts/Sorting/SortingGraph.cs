@@ -27,7 +27,7 @@ public class SortingGraph : MonoBehaviour
 
     void Awake()
     {
-        factory.onItemCreated += CreateSortingNode;
+        factory.onGridItemCreated += CreateSortingNode;
         movementManager.OnItemMoved += UpdateGraphForItemMoved;
     }
 
@@ -44,12 +44,17 @@ public class SortingGraph : MonoBehaviour
 
     void OnDestroy()
     {
-        factory.onItemCreated -= CreateSortingNode;
+        factory.onGridItemCreated -= CreateSortingNode;
         movementManager.OnItemMoved -= UpdateGraphForItemMoved;
     }
 
     void CreateSortingNode(Item item)
     {
+        if (item.planeCategory != PlaneCategory.Floor)
+        {
+            SetStaticSortOrder(item);
+            return;
+        }
         SortingGraphNode node = item.gameObject.AddComponent<SortingGraphNode>();
         node.onNodeDestroyed += RemoveNode;
         if (!item.ItemIsInPreview) //this maybe should not be here
@@ -89,7 +94,11 @@ public class SortingGraph : MonoBehaviour
 
     void UpdateGraphForItemMoved(Item item, Vector2Int oldPosition, Vector2Int newPosition)
     {
-
+        if (item.planeCategory != PlaneCategory.Floor)
+        {
+            SetStaticSortOrder(item);
+            return;
+        }
 
         SortingGraphNode itemNode = item.gameObject.GetComponent<SortingGraphNode>();
 
@@ -163,6 +172,11 @@ public class SortingGraph : MonoBehaviour
         }
 
         stack.Push(node);
+    }
+
+    private void SetStaticSortOrder(Item item)
+    {
+        item.GetComponent<SpriteRenderer>().sortingOrder = -1;
     }
 
 }

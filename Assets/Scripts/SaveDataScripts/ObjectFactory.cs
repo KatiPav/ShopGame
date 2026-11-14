@@ -19,7 +19,7 @@ public class GameItemFactory : MonoBehaviour
     [SerializeField]
     private ItemRuntimeSet rightWallItems;
 
-    public Action<Item> onItemCreated;
+    public Action<Item> onGridItemCreated;
 
     public Item CreateGridItem(PlacedObjectDto obj)
     {
@@ -32,7 +32,7 @@ public class GameItemFactory : MonoBehaviour
         newObj.SetActive(true);
         item.Initialize(obj.PrefabId, new Vector2Int(obj.X, obj.Y), GetRuntimeSet(item.planeCategory), item.catalogCategory, item.planeCategory);
 
-        onItemCreated?.Invoke(item);
+        onGridItemCreated?.Invoke(item);
         return item;
     }
 
@@ -63,7 +63,7 @@ public class GameItemFactory : MonoBehaviour
         newObj.SetActive(true);
         item.Initialize(obj.PrefabId, default, GetRuntimeSet(item.planeCategory), item.catalogCategory, item.planeCategory);
 
-        onItemCreated?.Invoke(item);
+        onGridItemCreated?.Invoke(item);
         return item;
     }
 
